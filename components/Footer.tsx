@@ -57,7 +57,7 @@ export default function Footer() {
             <div className="flex space-x-4">
               {/* Instagram */}
               <a
-                href="https://instagram.com/mdtahseen7"
+                href="https://instagram.com/md_tahseen_7"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 bg-gray-800 hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 rounded-lg transition-all duration-300"
@@ -83,7 +83,7 @@ export default function Footer() {
 
               {/* LinkedIn */}
               <a
-                href="https://linkedin.com/in/mdtahseen7"
+                href="https://linkedin.com/in/md-tahseen"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 bg-gray-800 hover:bg-blue-600 rounded-lg transition-colors"
@@ -96,7 +96,7 @@ export default function Footer() {
 
               {/* Twitter/X */}
               <a
-                href="https://twitter.com/mdtahseen7"
+                href="https://twitter.com/md_tahseen_7"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 bg-gray-800 hover:bg-blue-500 rounded-lg transition-colors"

@@ -423,7 +423,7 @@ export default function HomePage() {
 
     return (
       <div className="group relative bg-gray-900 rounded-xl overflow-hidden card-hover">
-        <div className="relative aspect-[2/3]">
+        <div className="relative aspect-[5/7]">
           {posterPath ? (
             <Image
               src={item.poster ? posterPath : `${TMDB_IMAGE_BASE_URL}${posterPath}`}
@@ -689,7 +689,7 @@ export default function HomePage() {
               </h2>
               
               {/* Content grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8">
                 {getFilteredContent().map((item) => (
                   <ContentCard key={`${item.id}-${item.type || item.media_type || 'unknown'}`} item={item} />
                 ))}

@@ -248,8 +248,8 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
                 </svg>
                 <span className="relative z-10">Watch Now</span>
               </button>
-
-              <button
+              {/* More Details Button - will add later not usable right now*/}
+              {/* <button
                 onClick={handleMoreDetails}
                 className="group relative flex items-center justify-center space-x-2 bg-black/20 hover:bg-black/40 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300 border border-white/20 hover:border-white/40 backdrop-blur-md shadow-lg hover:shadow-xl hover:scale-105 transform"
               >
@@ -257,7 +257,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span className="relative z-10">More Details</span>
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
