@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import AuthProvider from '@/components/AuthProvider'
+import LoadingBar from '@/components/LoadingBar'
 
 export const metadata: Metadata = {
   title: 'Nova',
@@ -58,6 +59,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
       <body className="bg-gray-900 text-white min-h-screen font-sans">
+        <LoadingBar />
         <AuthProvider>
           {children}
         </AuthProvider>
