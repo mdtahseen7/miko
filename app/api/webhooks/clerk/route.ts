@@ -5,6 +5,18 @@ import { prisma } from '@/lib/prisma'
 
 const webhookSecret = process.env.CLERK_WEBHOOK_SECRET || ''
 
+// Define the Clerk webhook event types
+interface ClerkWebhookEvent {
+  type: 'user.created' | 'user.updated' | 'user.deleted'
+  data: {
+    id: string
+    email_addresses?: { email_address: string }[]
+    first_name?: string
+    last_name?: string
+    image_url?: string
+  }
+}
+
 export async function POST(req: NextRequest) {
   // Get the headers
   const headerPayload = await headers()
@@ -23,7 +35,7 @@ export async function POST(req: NextRequest) {
   // Create a new Svix instance with your secret.
   const wh = new Webhook(webhookSecret)
 
-  let evt
+  let evt: ClerkWebhookEvent
 
   // Verify the payload with the headers
   try {
@@ -31,7 +43,7 @@ export async function POST(req: NextRequest) {
       'svix-id': svix_id,
       'svix-timestamp': svix_timestamp,
       'svix-signature': svix_signature,
-    })
+    }) as ClerkWebhookEvent
   } catch (err) {
     console.error('Error verifying webhook:', err)
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
@@ -48,7 +60,7 @@ export async function POST(req: NextRequest) {
       await prisma.user.create({
         data: {
           clerkId: id,
-          email: email_addresses[0]?.email_address || null,
+          email: email_addresses?.[0]?.email_address || null,
           name: `${first_name || ''} ${last_name || ''}`.trim() || null,
           image: image_url || null,
         },
@@ -69,7 +81,7 @@ export async function POST(req: NextRequest) {
       await prisma.user.update({
         where: { clerkId: id },
         data: {
-          email: email_addresses[0]?.email_address || null,
+          email: email_addresses?.[0]?.email_address || null,
           name: `${first_name || ''} ${last_name || ''}`.trim() || null,
           image: image_url || null,
         },
