@@ -1,4 +1,4 @@
-﻿# Nova - Modern Streaming Platform - [Entirely Inspired from https://github.com/ambr0sial/nova  changed according to my needs, Updataed the Design and added authentications Make sure to check out the original developer!]
+﻿# Nova - Modern Streaming Platform 
 
 <div align="center">
   <img src="./public/logo.png" alt="Nova Logo" width="120" height="120">
@@ -264,3 +264,4 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
   <p>Made with ❤️ by <a href="https://github.com/mdtahseen7">MD Tahseen</a></p>
   <p>⭐ Star this repository if you found it helpful!</p>
 </div>
+
