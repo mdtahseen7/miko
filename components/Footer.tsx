@@ -34,6 +34,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/about" className="text-gray-400 hover:text-[#8A2BE2] transition-colors">
+                  About
+                </Link>
+              </li>
+              <li>
                 <Link href="/livesports" className="text-gray-400 hover:text-[#8A2BE2] transition-colors">
                   Live Sports
                 </Link>
@@ -132,6 +137,9 @@ export default function Footer() {
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link href="/privacy" className="text-gray-400 hover:text-[#cd2be2] text-sm transition-colors">
                 Privacy Policy
+              </Link>
+              <Link href="/terms" className="text-gray-400 hover:text-[#cd2be2] text-sm transition-colors">
+                Terms of Service
               </Link>
               <Link href="/contact" className="text-gray-400 hover:text-[#e22bdc] text-sm transition-colors">
                 Contact
