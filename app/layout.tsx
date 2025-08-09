@@ -4,16 +4,16 @@ import AuthProvider from '@/components/AuthProvider'
 import LoadingBar from '@/components/LoadingBar'
 
 export const metadata: Metadata = {
-  title: 'Nova',
-  description: 'Click, watch, enjoy. Nova breaks down the paywall, ensuring that quality content is accessible to everyone.',
-  keywords: 'free movies, free streaming, watch movies online, free tv shows, streaming service, watch movies free, online streaming, novastream, free movies online, free series online',
+  title: 'Miko',
+  description: 'Click, watch, enjoy. Miko breaks down the paywall, ensuring that quality content is accessible to everyone.',
+  keywords: 'free movies, free streaming, watch movies online, free tv shows, streaming service, watch movies free, online streaming, miko stream, free movies online, free series online',
   openGraph: {
-    title: 'Nova - Watch Movies & TV Shows',
-    description: 'Click, watch, enjoy. Nova breaks down the paywall, ensuring that quality content is accessible to everyone.',
-    url: 'https://novastream.top',
+    title: 'Miko - Watch Movies & TV Shows',
+    description: 'Click, watch, enjoy. Miko breaks down the paywall, ensuring that quality content is accessible to everyone.',
+    url: 'https://miko-stream.app',
     images: [
       {
-        url: 'https://raw.githubusercontent.com/ambr0sial/nova/main/logo.png',
+        url: '/logo.png',
         width: 300,
         height: 300,
       },
@@ -21,12 +21,12 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary',
-    title: 'Nova - Watch Movies & TV Shows',
-    description: 'Click, watch, enjoy. Nova breaks down the paywall, ensuring that quality content is accessible to everyone.',
-    images: ['https://raw.githubusercontent.com/ambr0sial/nova/main/logo.png'],
+    title: 'Miko - Watch Movies & TV Shows',
+    description: 'Click, watch, enjoy. Miko breaks down the paywall, ensuring that quality content is accessible to everyone.',
+    images: ['/logo.png'],
   },
   icons: {
-    icon: 'https://raw.githubusercontent.com/ambr0sial/nova/main/logo.png',
+    icon: '/logo.png',
   },
 }
 

@@ -17,7 +17,7 @@
 ### 2. Create New Project
 1. Click "New Project"
 2. **Organization**: Choose your personal org
-3. **Name**: `nova-streaming`
+3. **Name**: `miko-streaming`
 4. **Database Password**: Create a strong password (save it!)
 5. **Region**: Choose closest to your users
 6. Click "Create new project"
@@ -48,7 +48,7 @@ DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.abcdefghijklmnop.supabase.
 ### 1. Create PlanetScale Account
 1. Go to [planetscale.com](https://planetscale.com)
 2. Sign up with GitHub
-3. Create database: `nova-streaming`
+3. Create database: `miko-streaming`
 
 ### 2. Get Connection String
 1. Go to your database dashboard
@@ -118,6 +118,6 @@ After setting up your database:
 1. Get your connection string
 2. Add it to Vercel environment variables
 3. Deploy your app
-4. Your Nova streaming app will be live! 🎉
+4. Your Miko streaming app will be live! 🎉
 
 **Recommended**: Use Supabase for the easiest setup experience.

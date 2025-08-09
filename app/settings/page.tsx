@@ -112,7 +112,7 @@ export default function SettingsPage() {
           {/* Page header */}
           <div className="mb-8">
             <h1 className="text-4xl font-bold mb-4">Settings</h1>
-            <p className="text-gray-400">Customize your Nova streaming experience</p>
+            <p className="text-gray-400">Customize your Miko streaming experience</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -235,13 +235,13 @@ export default function SettingsPage() {
               <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              About Nova
+              About Miko
             </h2>
             
             <div className="grid md:grid-cols-2 gap-6 text-sm">
               <div>
                 <h3 className="font-medium mb-2">Version Information</h3>
-                <p className="text-gray-400">Nova Streaming Platform v2.0</p>
+                <p className="text-gray-400">Miko Streaming Platform v2.0</p>
                 <p className="text-gray-400">Built with Next.js and React</p>
               </div>
               

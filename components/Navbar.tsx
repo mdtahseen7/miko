@@ -61,9 +61,9 @@ export default function Navbar({
           {/* Logo & Nav */}
           <div className="flex items-center space-x-10">
             <Link href="/" className="flex items-center space-x-3">
-              <Image src="/logo.png" alt="Nova" width={40} height={40} />
+              <Image src="/logo.png" alt="Miko" width={40} height={40} />
               <span className="text-2xl font-bold bg-gradient-to-r from-[#8A2BE2] to-[#FF6EC4] bg-clip-text text-transparent tracking-wide">
-                Nova
+                Miko
               </span>
             </Link>
 

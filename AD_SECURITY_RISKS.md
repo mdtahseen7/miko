@@ -1,4 +1,4 @@
-# Third-Party Ads & Security Risks in Nova
+# Third-Party Ads & Security Risks in Miko
 
 ## 🚨 Why Disabling Sandbox Exposes You to Ads
 

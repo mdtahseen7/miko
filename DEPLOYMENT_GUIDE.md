@@ -1,4 +1,4 @@
-# 🚀 Nova Streaming App - Vercel Deployment Guide
+# 🚀 Miko Streaming App - Vercel Deployment Guide
 
 ## Prerequisites
 1. **GitHub Account** - Your code needs to be in a GitHub repository
@@ -12,7 +12,7 @@ Since SQLite doesn't work on Vercel, we need to use a cloud database. I recommen
 ### 1.1 Set up Supabase Database (Recommended)
 1. Go to [supabase.com](https://supabase.com)
 2. Sign up with GitHub
-3. Create a new project: "nova-streaming"
+3. Create a new project: "miko-streaming"
 4. Set a strong database password
 5. Copy the connection string from Settings → Database → Connection string → URI
 6. Replace `[YOUR-PASSWORD]` with your actual password
@@ -43,19 +43,19 @@ datasource db {
 ```bash
 git init
 git add .
-git commit -m "Initial commit - Nova streaming app"
+git commit -m "Initial commit - Miko streaming app"
 ```
 
 ### 2.2 Create GitHub Repository
 1. Go to [github.com](https://github.com)
 2. Click "New repository"
-3. Name it "nova-streaming" or similar
+3. Name it "miko-streaming" or similar
 4. Don't initialize with README (since you already have files)
 5. Click "Create repository"
 
 ### 2.3 Push to GitHub
 ```bash
-git remote add origin https://github.com/YOUR_USERNAME/nova-streaming.git
+git remote add origin https://github.com/YOUR_USERNAME/miko-streaming.git
 git branch -M main
 git push -u origin main
 ```
@@ -172,6 +172,6 @@ If you encounter issues:
 
 ---
 
-**Your Nova streaming app will be live at: `https://your-app-name.vercel.app`**
+**Your Miko streaming app will be live at: `https://your-app-name.vercel.app`**
 
 🎉 Congratulations on deploying your streaming app!

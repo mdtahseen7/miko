@@ -1,4 +1,4 @@
-# Vercel Deployment Guide for Nova
+# Vercel Deployment Guide for Miko
 
 ## Quick Start Deployment
 
@@ -225,4 +225,4 @@ NEXTAUTH_DEBUG=false
 - [ ] Sign in/out working
 - [ ] Google OAuth working
 
-Your Nova app should now be live at: `https://your-app-name.vercel.app`
+Your Miko app should now be live at: `https://your-app-name.vercel.app`

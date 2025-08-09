@@ -13,9 +13,9 @@ export default function Footer() {
           {/* Logo and Description */}
           <div className="col-span-1 md:col-span-2">
             <Link href="/" className="flex items-center space-x-2 mb-4">
-              <Image src="/logo.png" alt="Nova" width={40} height={40} />
+              <Image src="/logo.png" alt="Miko" width={40} height={40} />
               <span className="text-2xl font-bold bg-gradient-to-r from-[#8A2BE2] to-[#FF6EC4] bg-clip-text text-transparent tracking-wide">
-                Nova
+                Miko
               </span>
             </Link>
             <p className="text-gray-400 mb-4 max-w-md">
@@ -127,16 +127,13 @@ export default function Footer() {
         <div className="border-t border-gray-800 pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © {new Date().getFullYear()} Nova. All rights reserved.
+              © {new Date().getFullYear()} Miko. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link href="/privacy" className="text-gray-400 hover:text-[#8A2BE2] text-sm transition-colors">
+              <Link href="/privacy" className="text-gray-400 hover:text-[#cd2be2] text-sm transition-colors">
                 Privacy Policy
               </Link>
-              <Link href="/terms" className="text-gray-400 hover:text-[#8A2BE2] text-sm transition-colors">
-                Terms of Service
-              </Link>
-              <Link href="/contact" className="text-gray-400 hover:text-[#8A2BE2] text-sm transition-colors">
+              <Link href="/contact" className="text-gray-400 hover:text-[#e22bdc] text-sm transition-colors">
                 Contact
               </Link>
             </div>

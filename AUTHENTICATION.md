@@ -1,4 +1,4 @@
-# Nova Authentication System
+# Miko Authentication System
 
 ## Overview
 Complete user authentication system built with NextAuth.js, supporting both Google OAuth and traditional email/password authentication.

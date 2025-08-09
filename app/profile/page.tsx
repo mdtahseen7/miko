@@ -122,9 +122,9 @@ export default function ProfilePage() {
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-3">
-              <Image src="/logo.png" alt="Nova" width={32} height={32} />
+              <Image src="/logo.png" alt="Miko" width={32} height={32} />
               <span className="text-xl font-bold bg-gradient-to-r from-[#8A2BE2] to-[#FF6EC4] bg-clip-text text-transparent">
-                Nova
+                Miko
               </span>
             </Link>
             <button

@@ -1,4 +1,4 @@
-# Iframe Sandbox Security in Nova
+# Iframe Sandbox Security in Miko
 
 ## What is Sandbox Mode?
 

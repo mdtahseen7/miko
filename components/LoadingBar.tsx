@@ -41,10 +41,10 @@ export default function LoadingBar() {
               {/* Innermost pulsing ring */}
               <div className="absolute inset-6 border-2 border-purple-400/50 rounded-full animate-pulse"></div>
               
-              {/* Nova Logo Icon */}
+              {/* Miko Logo Icon */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="w-10 h-10 bg-gradient-to-r from-[#8A2BE2] to-[#FF6EC4] rounded-full flex items-center justify-center shadow-lg shadow-purple-500/50">
-                  <span className="text-white font-bold text-lg tracking-wider">N</span>
+                  <span className="text-white font-bold text-lg tracking-wider">M</span>
                 </div>
               </div>
             </div>
@@ -53,7 +53,7 @@ export default function LoadingBar() {
           {/* Loading Text with enhanced styling */}
           <div className="text-white">
             <h3 className="text-2xl font-bold bg-gradient-to-r from-[#8A2BE2] to-[#FF6EC4] bg-clip-text text-transparent mb-3 tracking-wide">
-              Nova
+              Miko
             </h3>
             <p className="text-gray-300 text-sm mb-4 font-medium">Loading your content...</p>
             

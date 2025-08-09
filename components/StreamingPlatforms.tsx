@@ -64,7 +64,7 @@ export default function StreamingPlatforms() {
             Content Available From
           </h2>
           <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
-            Nova aggregates content from various premium streaming platforms
+            Miko aggregates content from various premium streaming platforms
           </p>
         </div>
 
