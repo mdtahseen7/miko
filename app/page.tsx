@@ -49,7 +49,7 @@ export default function HomePage() {
   const [netflixPage, setNetflixPage] = useState(1);
   const [amazonPrimePage, setAmazonPrimePage] = useState(1);
   const [watchLater, setWatchLater] = useState<any[]>([]);
-  const [showSearch, setShowSearch] = useState(false);
+  const [showSearch, setShowSearch] = useState(false); // legacy state (will be deprecated)
   const [isScrolled, setIsScrolled] = useState(false);
   
   // Ref to track if we're loading more content
@@ -73,7 +73,7 @@ export default function HomePage() {
     
     // Add scroll listener for header effect
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 100);
+      setIsScrolled(window.scrollY > 50); // Reduced from 100 to 50 for earlier transparency
     };
     
     window.addEventListener('scroll', handleScroll);
@@ -354,10 +354,10 @@ export default function HomePage() {
   };
 
   const handleHeroWatchNow = (movie: ContentItem) => {
-    // Navigate to watch page with the movie details
+    // Navigate to details page with the movie details
     const movieId = movie.id;
     const movieType = 'movie';
-    window.location.href = `/watch?id=${movieId}&type=${movieType}`;
+    window.location.href = `/details?id=${movieId}&type=${movieType}`;
   };
 
   const handleHeroMoreDetails = (movie: ContentItem) => {
@@ -417,6 +417,7 @@ export default function HomePage() {
     const type = item.type || item.media_type || (item.title ? 'movie' : 'tv');
 
     const truncateText = (text: string, maxLength: number = 120) => {
+      if (!text || typeof text !== 'string') return '';
       if (text.length <= maxLength) return text;
       return text.substr(0, maxLength) + '...';
     };
@@ -465,27 +466,34 @@ export default function HomePage() {
           
           {/* Hover overlay with details */}
           <div className="card-overlay absolute inset-0 flex flex-col justify-end p-4 text-white">
-            <div className="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <h4 className="font-semibold text-sm mb-1 line-clamp-2">{title}</h4>
-            {rating > 0 && (
-              <div className="flex items-center space-x-1 mb-2">
-                <svg className="w-3 h-3 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            <div className="space-y-2">
+              <h3 className="font-bold text-lg leading-tight">{title}</h3>
+              
+              {rating > 0 && (
+                <div className="flex items-center space-x-1">
+                  <svg className="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                  </svg>
+                  <span className="text-sm font-semibold">{rating.toFixed(1)}/10</span>
+                </div>
+              )}
+              
+              {overview && (
+                <p className="text-sm text-gray-200 leading-relaxed">
+                  {truncateText(overview)}
+                </p>
+              )}
+              
+              <Link
+                href={`/details?id=${item.id}&type=${type}`}
+                className="inline-flex items-center mt-3 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm font-medium"
+              >
+                <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M8 5v10l7-5z"/>
                 </svg>
-                <span className="text-xs">{rating.toFixed(1)}</span>
-              </div>
-            )}
-            
-            <Link
-              href={`/watch?id=${item.id}&type=${type}`}
-              className="inline-flex items-center px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-xs font-medium"
-            >
-              <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M8 5v10l7-5z"/>
-              </svg>
-              Watch
-            </Link>
-          </div>
+                View Details
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -515,27 +523,20 @@ export default function HomePage() {
           setSelectedGenre('all');
           setSelectedYear('all');
         }}
-        onSearchToggle={() => setShowSearch(!showSearch)}
-        onSearchChange={(query) => {
-          setSearchQuery(query);
-          if (query) {
-            setCurrentView('search');
-          }
-        }}
+  onSearchToggle={() => { window.location.href = '/search'; }}
+  onSearchChange={() => {}}
       />
 
       {/* Hero Section - Only show on home page */}
-      {currentView === 'home' && !showSearch && (
-        <div className="mt-20">
-          <HeroSection 
-            onWatchNow={handleHeroWatchNow}
-            onMoreDetails={handleHeroMoreDetails}
-          />
-        </div>
+  {currentView === 'home' && (
+        <HeroSection 
+          onWatchNow={handleHeroWatchNow}
+          onMoreDetails={handleHeroMoreDetails}
+        />
       )}
 
       {/* Main content */}
-      <main className={currentView === 'home' && !showSearch ? "pb-8" : "pt-24 pb-8"}>
+  <main className={currentView === 'home' ? "pb-8" : "pt-24 pb-8"}>
         <div className="container mx-auto px-4">
           {/* Filters */}
           {currentView !== 'watchlater' && (

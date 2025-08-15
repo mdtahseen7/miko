@@ -83,15 +83,10 @@ export default function LiveSportsPage() {
   };
 
   const handleSearchToggle = () => {
-    setShowSearch(!showSearch);
+    window.location.href = '/search';
   };
 
-  const handleSearchChange = (query: string) => {
-    setSearchQuery(query);
-    if (query) {
-      router.push(`/?search=${encodeURIComponent(query)}`);
-    }
-  };
+  const handleSearchChange = () => {};
 
   const MatchCard = ({ match }: { match: SportsMatch }) => (
     <div className="group bg-gray-800 rounded-lg overflow-hidden hover:scale-105 transition-all duration-300 hover:shadow-2xl">

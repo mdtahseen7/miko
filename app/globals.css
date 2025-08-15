@@ -305,3 +305,91 @@ iframe[src*="popup"],
   max-height: 2000px;
   opacity: 1;
 }
+
+/* Horizontal scrollbar hide */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
+/* Episode slider container */
+.episodes-slider {
+  position: relative;
+}
+
+.episodes-slider:hover .scroll-button {
+  opacity: 1;
+}
+
+.scroll-button {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* ----------------------------------------------
+   Miko Purple Gradient Background & Surfaces
+   Inspired by provided screenshot: deep subtle
+   plum / violet tones with a faint radial glow.
+----------------------------------------------- */
+.miko-bg {
+  /* Simplified gradient (removed background-attachment: fixed for perf) */
+  background: linear-gradient(150deg, #0b0013 0%, #170024 55%, #0b0013 100%);
+  position: relative;
+}
+
+.miko-bg::before {
+  /* Lightweight radial glow layer (single pseudo-element vs multiple layers) */
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 55% 35%, rgba(160,50,255,0.18), rgba(60,0,110,0) 55%),
+    radial-gradient(circle at 80% 75%, rgba(190,60,255,0.12), rgba(50,0,90,0) 65%);
+  pointer-events: none;
+  z-index: -1;
+  filter: saturate(110%);
+}
+
+.miko-surface {
+  background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+
+.miko-outline {
+  box-shadow: 0 0 0 1px rgba(168,85,247,0.45), 0 0 12px -2px rgba(168,85,247,0.35);
+}
+
+/* Purple-tinted translucent navbar surfaces */
+.miko-navbar-glass {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: linear-gradient(120deg, rgba(25,0,40,0.78), rgba(15,0,28,0.62));
+  border-bottom: 1px solid rgba(168,85,247,0.12);
+  box-shadow: 0 2px 6px -1px rgba(0,0,0,0.5), 0 4px 14px -6px rgba(110,0,155,0.35);
+}
+
+.miko-navbar-top {
+  background: linear-gradient(120deg, rgba(45,0,70,0.30), rgba(25,0,45,0.28));
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.35);
+  border-bottom: 1px solid rgba(168,85,247,0.08);
+}
+
+/* Search input variant matching screenshot */
+.miko-search-input {
+  background: rgba(25,0,45,0.50);
+  border: 1px solid rgba(168,85,247,0.45);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 0 10px -3px rgba(168,85,247,0.45);
+  transition: background .3s, box-shadow .35s, border-color .35s;
+}
+.miko-search-input:focus {
+  border-color: rgba(216,180,254,0.8);
+  box-shadow: 0 0 0 1px rgba(216,180,254,0.8), 0 0 16px -2px rgba(216,180,254,0.65);
+  background: rgba(35,0,65,0.70);
+}

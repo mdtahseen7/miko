@@ -90,13 +90,13 @@ export default function ContentSection({
             )}
             
             <Link
-              href={`/watch?id=${item.id}&type=${type}`}
+              href={`/details?id=${item.id}&type=${type}`}
               className="inline-flex items-center px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-xs font-medium"
             >
               <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M8 5v10l7-5z"/>
               </svg>
-              Watch
+              View Details
             </Link>
           </div>
         </div>

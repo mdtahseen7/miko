@@ -134,7 +134,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
 
   return (
     <div 
-      className="relative h-[calc(100vh-80px)] bg-black overflow-hidden"
+      className="relative h-screen bg-black overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -150,10 +150,9 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
             sizes="100vw"
           />
         </div>
-        {/* Dark overlay gradients */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black via-black/60 to-transparent" />
-        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/60 to-transparent" />
+        {/* Dark overlay gradients now extend beneath navbar for better readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black via-black/60 to-transparent" />
       </div>
 
       {/* Trending Badge */}

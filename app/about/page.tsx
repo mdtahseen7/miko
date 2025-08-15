@@ -1,34 +1,57 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import Navbar from '@/components/Navbar';
 
 export default function AboutPage() {
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [watchLaterCount, setWatchLaterCount] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    // Handle scroll for navbar
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 100);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleSearchToggle = () => {
+    setShowSearch(!showSearch);
+    if (!showSearch) {
+      setSearchQuery('');
+    }
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleViewChange = (view: string) => {
+    // Navigate to home with the selected view
+    window.location.href = `/?view=${view}`;
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <div className="border-b border-gray-800">
-        <div className="max-w-6xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-              <Image src="/logo.png" alt="Miko" width={32} height={32} />
-              <span className="text-xl font-bold bg-gradient-to-r from-[#8A2BE2] to-[#FF6EC4] bg-clip-text text-transparent">
-                Miko
-              </span>
-            </Link>
-            <Link 
-              href="/" 
-              className="text-gray-400 hover:text-white transition-colors text-sm"
-            >
-              ← Back to Home
-            </Link>
-          </div>
-        </div>
-      </div>
+      <Navbar
+        currentView="about"
+        showSearch={showSearch}
+        searchQuery={searchQuery}
+        watchLaterCount={watchLaterCount}
+        isScrolled={isScrolled}
+        onViewChange={handleViewChange}
+        onSearchToggle={handleSearchToggle}
+        onSearchChange={handleSearchChange}
+      />
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 py-20">
+      <div className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 py-32 pt-40">{/* Added pt-40 to account for navbar */}
         <div className="max-w-6xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-[#8A2BE2] to-[#FF6EC4] bg-clip-text text-transparent">
             About Miko

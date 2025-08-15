@@ -58,7 +58,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
-      <body className="bg-gray-900 text-white min-h-screen font-sans">
+  <body className="miko-bg text-white min-h-screen font-sans">
         <LoadingBar />
         <AuthProvider>
           {children}

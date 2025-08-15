@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import ProfilePictureUpload from '@/components/ProfilePictureUpload'
+import Navbar from '@/components/Navbar'
 
 interface UserProfile {
   id: string
@@ -32,6 +33,11 @@ export default function ProfilePage() {
     location: '',
     website: ''
   })
+  // Navbar state
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [watchLaterCount, setWatchLaterCount] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -41,6 +47,32 @@ export default function ProfilePage() {
       return
     }
   }, [isLoaded, isSignedIn, router])
+
+  // Handle scroll for navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 100);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleSearchToggle = () => {
+    setShowSearch(!showSearch);
+    if (!showSearch) {
+      setSearchQuery('');
+    }
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleViewChange = (view: string) => {
+    // Navigate to home with the selected view
+    window.location.href = `/?view=${view}`;
+  };
 
   // Fetch user profile
   useEffect(() => {
@@ -117,28 +149,19 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <div className="border-b border-gray-800">
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-3">
-              <Image src="/logo.png" alt="Miko" width={32} height={32} />
-              <span className="text-xl font-bold bg-gradient-to-r from-[#8A2BE2] to-[#FF6EC4] bg-clip-text text-transparent">
-                Miko
-              </span>
-            </Link>
-            <button
-              onClick={handleSignOut}
-              className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
-            >
-              Sign Out
-            </button>
-          </div>
-        </div>
-      </div>
+      <Navbar
+        currentView="profile"
+        showSearch={showSearch}
+        searchQuery={searchQuery}
+        watchLaterCount={watchLaterCount}
+        isScrolled={isScrolled}
+        onViewChange={handleViewChange}
+        onSearchToggle={handleSearchToggle}
+        onSearchChange={handleSearchChange}
+      />
 
       {/* Profile Content */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-32 pt-40">{/* Added pt-40 to account for navbar */}
         {/* Profile Header */}
         <div className="bg-gray-900 bg-opacity-60 backdrop-blur-sm rounded-lg p-8 border border-gray-700 mb-8">
           <div className="flex flex-col lg:flex-row lg:items-start lg:space-x-8 space-y-6 lg:space-y-0">
