@@ -6,7 +6,10 @@ import Link from 'next/link';
 import { 
   fetchMovies, 
   TMDB_IMAGE_BASE_URL,
-  fetchContentDetails 
+  fetchContentDetails,
+  formatRuntime,
+  getLocalStorage,
+  setLocalStorage
 } from '@/lib/utils';
 import type { ContentItem, Movie } from '@/lib/types';
 
@@ -21,6 +24,13 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
   const [loading, setLoading] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [watchLater, setWatchLater] = useState<any[]>([]);
+
+  // Load watch later list once
+  useEffect(() => {
+    const saved = getLocalStorage('watchLater', []);
+    setWatchLater(saved);
+  }, []);
 
   useEffect(() => {
     const loadFeaturedMovies = async () => {
@@ -32,9 +42,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
         if (moviesResponse.results && moviesResponse.results.length > 0) {
           // Get top 5 movies for carousel
           const topMovies = moviesResponse.results.slice(0, 5);
-          const movieDetailsPromises = topMovies.map((movie: any) => 
-            fetchContentDetails(movie.id.toString(), 'movie')
-          );
+          const movieDetailsPromises = topMovies.map((movie: any) => fetchContentDetails(movie.id.toString(), 'movie'));
           
           const movieDetails = await Promise.all(movieDetailsPromises);
           const validMovies = movieDetails.filter(movie => movie !== null) as Movie[];
@@ -104,6 +112,37 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
 
   const currentMovie = featuredMovies[currentMovieIndex];
 
+  const isInWatchLater = (movie: any) => watchLater.some(w => w.id === movie.id && w.type === 'movie');
+  const toggleWatchLater = (movie: any) => {
+    const exists = isInWatchLater(movie);
+    const updated = exists
+      ? watchLater.filter(w => !(w.id === movie.id && w.type === 'movie'))
+      : [...watchLater, { id: movie.id, type: 'movie', title: movie.title, poster: movie.poster_path, addedAt: new Date().toISOString() }];
+    setWatchLater(updated);
+    setLocalStorage('watchLater', updated);
+  };
+
+  const getCertification = (movie: any): string => {
+    try {
+      const rels = movie.release_dates?.results || [];
+      const us = rels.find((r: any) => r.iso_3166_1 === 'US');
+      const cert = us?.release_dates?.find((d: any) => d.certification)?.certification;
+      return cert || '';
+    } catch { return ''; }
+  };
+
+  const getRuntime = (movie: any): string => {
+    if (movie.runtime) return formatRuntime(movie.runtime);
+    return '';
+  };
+
+  const getPrimaryGenre = (movie: any): string => movie.genres?.[0]?.name || '';
+
+  const getTrailer = (movie: any) => {
+    const vids = movie.videos?.results || [];
+    return vids.find((v: any) => v.type === 'Trailer' && v.site === 'YouTube') || vids[0];
+  };
+
   if (loading) {
     return (
       <div className="relative h-[calc(100vh-80px)] bg-gray-900 animate-pulse">
@@ -134,7 +173,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
 
   return (
     <div 
-      className="relative h-screen bg-black overflow-hidden"
+      className="relative h-[92vh] bg-black overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -151,8 +190,8 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
           />
         </div>
         {/* Dark overlay gradients now extend beneath navbar for better readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black via-black/60 to-transparent" />
+  <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent" />
+  <div className="absolute bottom-0 left-0 right-0 h-60 bg-gradient-to-t from-black via-black/70 to-transparent" />
       </div>
 
       {/* Trending Badge */}
@@ -186,81 +225,57 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
       )}
 
       {/* Main Content */}
-      <div className="relative z-20 container mx-auto px-6 lg:px-20 h-full flex items-center">
-        <div className="max-w-2xl lg:max-w-3xl">
-          {/* Movie Title */}
-          <div className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'}`}>
-            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 leading-tight">
+  <div className="relative z-20 container mx-auto px-6 lg:px-16 h-full flex items-start pt-32 md:pt-40 pb-24">
+        <div className="max-w-2xl">
+          <div className={`transition-all duration-500 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
               {currentMovie.title}
             </h1>
-
-            {/* Movie Meta Info */}
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              <span className="flex items-center space-x-1 bg-black/50 text-white px-3 py-1 rounded-lg text-sm backdrop-blur-sm">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-                </svg>
-                <span>{formatReleaseYear(currentMovie.release_date)}</span>
-              </span>
-              
-              <span className="flex items-center space-x-1 bg-black/50 text-white px-3 py-1 rounded-lg text-sm backdrop-blur-sm">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-                </svg>
-                <span>Movie</span>
-              </span>
-
-              <div className="flex items-center space-x-1 bg-yellow-600 text-white px-3 py-1 rounded-lg text-sm font-semibold">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-                <span>{currentMovie.vote_average ? currentMovie.vote_average.toFixed(1) : '0.0'}/10</span>
-              </div>
+            <div className="flex flex-wrap items-center gap-5 text-sm text-gray-200 font-medium mb-6">
+              <span>{formatReleaseYear(currentMovie.release_date)}</span>
+              {getCertification(currentMovie) && (
+                <span className="bg-red-600 text-white font-semibold px-2 py-1 rounded-sm text-[11px] leading-none tracking-wide">
+                  {getCertification(currentMovie)}
+                </span>
+              )}
+              {getRuntime(currentMovie) && <span>{getRuntime(currentMovie)}</span>}
+              {getPrimaryGenre(currentMovie) && <span>{getPrimaryGenre(currentMovie)}</span>}
             </div>
-
-            {/* Genres */}
-            {currentMovie.genres && currentMovie.genres.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-6">
-                {currentMovie.genres.slice(0, 3).map((genre: any) => (
-                  <span
-                    key={genre.id}
-                    className="bg-white/10 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm border border-white/20"
-                  >
-                    {genre.name}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* Movie Overview */}
-            <p className="text-base sm:text-lg md:text-xl text-gray-200 mb-8 leading-relaxed max-w-2xl">
-              {truncateOverview(currentMovie.overview, 180)}
+            <p className="text-gray-200 text-base md:text-lg leading-relaxed mb-8 max-w-xl">
+              {truncateOverview(currentMovie.overview, 260)}
             </p>
-
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+            <div className="flex flex-wrap items-center gap-4 mb-10">
               <button
                 onClick={handleWatchNow}
-                className="group relative flex items-center justify-center space-x-2 bg-white/10 hover:bg-white/20 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300 backdrop-blur-md border border-white/20 hover:border-white/40 shadow-lg hover:shadow-xl hover:scale-105 transform"
+                className="flex items-center gap-2 px-7 py-3 rounded-sm font-semibold text-sm tracking-wide text-white bg-gradient-to-r from-fuchsia-500 via-purple-600 to-fuchsia-600 hover:from-fuchsia-400 hover:via-purple-500 hover:to-fuchsia-500 transition-all duration-300 shadow-lg shadow-fuchsia-900/40 hover:shadow-fuchsia-700/60 focus:outline-none focus:ring-2 focus:ring-fuchsia-400/60"
               >
-                <svg className="w-5 h-5 transition-transform group-hover:scale-110" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M8 5v10l7-5z" />
-                </svg>
-                <span className="relative z-10">Watch Now</span>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M8 5v10l7-5z"/></svg>
+                PLAY
               </button>
-              {/* More Details Button - will add later not usable right now*/}
-              {/* <button
-                onClick={handleMoreDetails}
-                className="group relative flex items-center justify-center space-x-2 bg-black/20 hover:bg-black/40 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300 border border-white/20 hover:border-white/40 backdrop-blur-md shadow-lg hover:shadow-xl hover:scale-105 transform"
+              <button
+                onClick={() => toggleWatchLater(currentMovie)}
+                className="flex items-center gap-2 bg-black/50 hover:bg-black/70 text-white px-6 py-3 rounded-sm font-semibold text-sm tracking-wide transition-colors border border-white/30 hover:border-white/50"
               >
-                <svg className="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="relative z-10">More Details</span>
-              </button> */}
+                <svg className={`w-5 h-5 ${isInWatchLater(currentMovie) ? 'fill-current' : ''}`} fill={isInWatchLater(currentMovie) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+                {isInWatchLater(currentMovie) ? 'MY LIST ✓' : '+ MY LIST'}
+              </button>
             </div>
+            {getTrailer(currentMovie) && (
+              <button
+                onClick={() => {
+                  const t = getTrailer(currentMovie); if (t) window.open(`https://www.youtube.com/watch?v=${t.key}`, '_blank');
+                }}
+                className="flex items-center gap-4 group text-white/90 hover:text-white tracking-wider"
+              >
+                <span className="w-14 h-14 rounded-full flex items-center justify-center border-2 border-white/70 group-hover:border-white transition-colors">
+                  <svg className="w-7 h-7 ml-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M8 5v10l7-5z"/></svg>
+                </span>
+                <span className="text-sm font-medium">WATCH TRAILER</span>
+              </button>
+            )}
           </div>
         </div>
+      </div>
 
         {/* Navigation Arrows (Hidden on mobile) */}
         {featuredMovies.length > 1 && (
@@ -298,7 +313,6 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
             </button>
           </>
         )}
-      </div>
     </div>
   );
 }

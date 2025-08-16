@@ -539,7 +539,8 @@ export default function HomePage() {
   <main className={currentView === 'home' ? "pb-8" : "pt-24 pb-8"}>
         <div className="container mx-auto px-4">
           {/* Filters */}
-          {currentView !== 'watchlater' && (
+          {/* Hide genre/year filters on home page per request */}
+          {currentView !== 'watchlater' && currentView !== 'home' && (
             <div className="mb-8 space-y-4">
               <div className="flex flex-wrap gap-4">
                 <select

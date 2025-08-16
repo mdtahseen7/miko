@@ -374,11 +374,10 @@ iframe[src*="popup"],
 }
 
 .miko-navbar-top {
-  background: linear-gradient(120deg, rgba(45,0,70,0.30), rgba(25,0,45,0.28));
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.35);
-  border-bottom: 1px solid rgba(168,85,247,0.08);
+  /* Fully transparent at very top (no scroll) */
+  background: transparent;
+  box-shadow: none;
+  border-bottom: none;
 }
 
 /* Search input variant matching screenshot */

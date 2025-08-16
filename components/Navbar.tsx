@@ -163,7 +163,7 @@ export default function Navbar({
             ) : (
               <div className="relative group">
                 <SignUpButton mode="modal">
-                  <button className="px-4 py-1.5 bg-red-600/90 hover:bg-red-600 text-white text-sm font-medium rounded-sm transition-all duration-200 hover:shadow-lg">
+                  <button className="px-4 py-1.5 rounded-sm text-white text-sm font-semibold tracking-wide transition-all duration-300 bg-gradient-to-r from-fuchsia-500 via-purple-600 to-fuchsia-600 hover:from-fuchsia-400 hover:via-purple-500 hover:to-fuchsia-500 shadow-md shadow-fuchsia-900/40 hover:shadow-fuchsia-700/60 focus:outline-none focus:ring-2 focus:ring-fuchsia-400/60">
                     Sign Up
                   </button>
                 </SignUpButton>

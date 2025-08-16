@@ -169,6 +169,32 @@ function DetailsPageContent() {
     return '';
   };
 
+  const getCertification = () => {
+    if (!content) return '';
+    try {
+      if (contentType === 'movie' && (content as any).release_dates) {
+        const rels = (content as any).release_dates.results || [];
+        const us = rels.find((r: any) => r.iso_3166_1 === 'US');
+        const cert = us?.release_dates?.find((d: any) => d.certification)?.certification;
+        return cert || '';
+      }
+      if (contentType === 'tv' && (content as any).content_ratings) {
+        const ratings = (content as any).content_ratings.results || [];
+        const us = ratings.find((r: any) => r.iso_3166_1 === 'US');
+        return us?.rating || '';
+      }
+    } catch {}
+    return '';
+  };
+
+  const getPrimaryGenre = () => getGenres()[0]?.name || '';
+
+  const trailer = (() => {
+    if (!content) return null;
+    const vids = (content as any).videos?.results || [];
+    return vids.find((v: any) => v.type === 'Trailer' && v.site === 'YouTube') || vids[0] || null;
+  })();
+
   // Build recommendations list from TMDB 'similar' results already included in details fetch
   const getRecommendations = () => {
     if (!content) return [] as any[];
@@ -261,7 +287,7 @@ function DetailsPageContent() {
       />
 
       {/* Hero Section with Backdrop */}
-      <div className="relative h-screen overflow-hidden">
+  <div className="relative h-[88vh] overflow-hidden">
         {/* Backdrop Image */}
         <div className="absolute inset-0">
           <Image
@@ -289,112 +315,54 @@ function DetailsPageContent() {
         </div>
 
         {/* Content Overlay */}
-        <div className="relative z-10 flex items-center min-h-screen pt-20 pb-8">
-          <div className="container mx-auto px-4 lg:px-8">
-            <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
-              
-              {/* Left Side - Poster */}
-              <div className="flex-shrink-0 relative">
-                <div className="relative w-80 h-[480px] rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
-                  <Image
-                    src={getPosterUrl()}
-                    alt={getTitle()}
-                    fill
-                    className="object-cover"
-                    sizes="320px"
-                  />
-                </div>
+        <div className="relative z-10 flex items-center h-full pt-24 pb-10">
+          <div className="container mx-auto px-4 lg:px-16 max-w-7xl">
+            <div className="max-w-2xl">
+              {/* Title */}
+              <h1 className="font-bold leading-tight text-5xl lg:text-6xl mb-6 drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
+                {getTitle()}
+              </h1>
+              {/* Meta Row */}
+              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-200 mb-6">
+                {getReleaseYear() && <span className="opacity-90">{getReleaseYear()}</span>}
+                {getCertification() && (
+                  <span className="bg-red-600 text-white font-semibold px-2 py-1 rounded-sm text-[11px] leading-none">{getCertification()}</span>
+                )}
+                {getRuntime() && <span className="opacity-90">{getRuntime()}</span>}
+                {getPrimaryGenre() && <span className="opacity-90">{getPrimaryGenre()}</span>}
               </div>
-
-              {/* Right Side - Details */}
-              <div className="flex-1 max-w-2xl">
-                <div className="space-y-6">
-                  
-                  {/* Title and Year */}
-                  <div>
-                    <h1 className="text-4xl lg:text-5xl font-bold mb-2 leading-tight">
-                      {getTitle()}
-                    </h1>
-                    <p className="text-xl text-gray-300">
-                      {getReleaseYear()}
-                    </p>
-                  </div>
-
-                  {/* Meta Info */}
-                  <div className="flex flex-wrap items-center gap-4 text-sm text-gray-300">
-                    {content.vote_average > 0 && (
-                      <div className="flex items-center space-x-1 bg-yellow-600 text-white px-3 py-1 rounded-full">
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
-                        <span className="font-semibold">{content.vote_average.toFixed(1)}</span>
-                      </div>
-                    )}
-                    
-                    {getRuntime() && (
-                      <span className="bg-gray-700 px-3 py-1 rounded-full">
-                        {getRuntime()}
-                      </span>
-                    )}
-
-                    {contentType === 'tv' && 'number_of_seasons' in content && (
-                      <span className="bg-gray-700 px-3 py-1 rounded-full">
-                        {content.number_of_seasons} Season{content.number_of_seasons !== 1 ? 's' : ''}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Genres */}
-                  {getGenres().length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {getGenres().map((genre) => (
-                        <span
-                          key={genre.id}
-                          className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-sm border border-white/20"
-                        >
-                          {genre.name}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Overview */}
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3 text-gray-200">Synopsis</h3>
-                    <p className="text-gray-300 leading-relaxed text-base lg:text-lg">
-                      {content.overview}
-                    </p>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex flex-wrap gap-4">
-                    <button
-                      onClick={() => handleWatchNow()}
-                      className="flex items-center space-x-3 bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-                    >
-                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M8 5v10l7-5z"/>
-                      </svg>
-                      <span>Watch Now</span>
-                    </button>
-
-                    <button
-                      onClick={addToWatchLater}
-                      className="flex items-center space-x-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 border border-white/20 hover:border-white/40"
-                    >
-                      <svg 
-                        className={`w-6 h-6 ${isInWatchLater() ? 'fill-current' : ''}`} 
-                        fill={isInWatchLater() ? 'currentColor' : 'none'} 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                      </svg>
-                      <span>{isInWatchLater() ? 'Remove from List' : 'Add to List'}</span>
-                    </button>
-                  </div>
-                </div>
+              {/* Overview */}
+              <p className="text-gray-200 text-base lg:text-lg leading-relaxed mb-8 line-clamp-[10] max-h-[15rem]">
+                {content.overview}
+              </p>
+              {/* Buttons */}
+              <div className="flex flex-wrap gap-4 mb-10">
+                <button
+                  onClick={() => handleWatchNow()}
+                  className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-7 py-3 rounded-sm font-semibold text-sm tracking-wide transition-all shadow-md hover:shadow-lg"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M8 5v10l7-5z"/></svg>
+                  PLAY
+                </button>
+                <button
+                  onClick={addToWatchLater}
+                  className="flex items-center gap-2 bg-black/50 hover:bg-black/70 text-white px-7 py-3 rounded-sm font-semibold text-sm tracking-wide transition-all border border-white/20 hover:border-white/40"
+                >
+                  <svg className={`w-5 h-5 ${isInWatchLater() ? 'fill-current' : ''}`} fill={isInWatchLater() ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+                  {isInWatchLater() ? 'MY LIST ✓' : '+ MY LIST'}
+                </button>
               </div>
+              {trailer && (
+                <button
+                  onClick={() => window.open(`https://www.youtube.com/watch?v=${trailer.key}`, '_blank')}
+                  className="flex items-center gap-3 group text-white/90 hover:text-white transition-colors"
+                >
+                  <span className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-white/70 group-hover:border-white transition-colors">
+                    <svg className="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M8 5v10l7-5z"/></svg>
+                  </span>
+                  <span className="text-sm tracking-widest font-medium">WATCH TRAILER</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

@@ -170,8 +170,10 @@ export const fetchAmazonPrimeContent = async (page = 1) => {
 
 export const fetchContentDetails = async (id: string, type: 'movie' | 'tv') => {
   try {
+    // Add release_dates (movies) & content_ratings (tv) to append_to_response for certification display
+    const extra = type === 'movie' ? 'release_dates' : 'content_ratings';
     const response = await fetch(
-      `${TMDB_BASE_URL}/${type}/${id}?api_key=${TMDB_API_KEY}&append_to_response=images,videos,credits,similar,keywords&language=en-US&include_image_language=en,null`
+      `${TMDB_BASE_URL}/${type}/${id}?api_key=${TMDB_API_KEY}&append_to_response=images,videos,credits,similar,keywords,${extra}&language=en-US&include_image_language=en,null`
     );
     return await response.json();
   } catch (error) {
