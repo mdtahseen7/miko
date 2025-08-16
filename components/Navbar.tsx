@@ -60,7 +60,22 @@ export default function Navbar({
         <div className="flex items-center justify-between">
           {/* Logo & Nav */}
           <div className="flex items-center space-x-10">
-            <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+            <Link 
+              href="/" 
+              className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+              onClick={(e) => {
+                // Always navigate to root and reset view state to home
+                // If we're already on the homepage route, prevent default routing to keep SPA smooth
+                if (typeof window !== 'undefined' && window.location.pathname === '/') {
+                  e.preventDefault();
+                }
+                handleViewChange('home');
+                // Smooth scroll to top for better UX
+                if (typeof window !== 'undefined') {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
+            >
               <Image src="/logo.png" alt="Miko" width={40} height={40} />
               <span className="text-2xl font-bold bg-gradient-to-r from-[#8A2BE2] to-[#FF6EC4] bg-clip-text text-transparent tracking-wide">
                 Miko
@@ -68,14 +83,12 @@ export default function Navbar({
             </Link>
 
             <nav className="hidden lg:flex space-x-7 ml-8">{/* Adjusted spacing */}
-              {['home', 'movies', 'tv', 'anime', 'livesports', 'watchlater'].map((view) => {
+              {['home', 'movies', 'tv', 'anime', 'watchlater'].map((view) => {
                 const active = currentView === view || (currentView === 'watch-sports' && view === 'livesports');
                 const label = view === 'watchlater'
                   ? `My List (${watchLaterCount})`
                   : view === 'tv'
                   ? 'TV Shows'
-                  : view === 'livesports'
-                  ? 'Sports'
                   : view === 'hollywood'
                   ? 'Hollywood'
                   : view === 'bollywood'
@@ -182,9 +195,6 @@ export default function Navbar({
             )}
           </div>
         </div>
-
-        {/* Search bar */}
-  {/* Inline search removed in favor of dedicated /search page */}
       </div>
     </header>
   );

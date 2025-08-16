@@ -146,8 +146,8 @@ export default function ProfilePictureUpload({
         </div>
         
         {uploading && (
-          <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
-            <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center text-xs font-medium text-white tracking-wide">
+            Uploading…
           </div>
         )}
       </div>

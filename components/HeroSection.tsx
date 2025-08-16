@@ -40,8 +40,8 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
         const moviesResponse = await fetchMovies(1);
         
         if (moviesResponse.results && moviesResponse.results.length > 0) {
-          // Get top 5 movies for carousel
-          const topMovies = moviesResponse.results.slice(0, 5);
+          // Get top 7 movies for carousel
+          const topMovies = moviesResponse.results.slice(0, 6);
           const movieDetailsPromises = topMovies.map((movie: any) => fetchContentDetails(movie.id.toString(), 'movie'));
           
           const movieDetails = await Promise.all(movieDetailsPromises);
@@ -71,7 +71,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
         setCurrentMovieIndex((prev) => (prev + 1) % featuredMovies.length);
         setIsTransitioning(false);
       }, 150);
-    }, 6000); // Change every 6 seconds
+    }, 4000); // Change every 4 seconds
 
     return () => clearInterval(interval);
   }, [featuredMovies.length, isPaused]);
@@ -173,7 +173,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
 
   return (
     <div 
-      className="relative h-[92vh] bg-black overflow-hidden"
+      className="relative h-[92vh] bg-black overflow-hidden mb-14 sm:mb-12 lg:mb-16"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -225,10 +225,10 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
       )}
 
       {/* Main Content */}
-  <div className="relative z-20 container mx-auto px-6 lg:px-16 h-full flex items-start pt-32 md:pt-40 pb-24">
+  <div className="relative z-20 container mx-auto px-6 lg:px-16 h-full flex items-start pt-60 sm:pt-28 md:pt-40 lg:pt-64 pb-24">
         <div className="max-w-2xl">
           <div className={`transition-all duration-500 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
+            <h1 className="text-4xl md:text-6xl lg:text-5xl font-bold text-white mb-4 leading-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
               {currentMovie.title}
             </h1>
             <div className="flex flex-wrap items-center gap-5 text-sm text-gray-200 font-medium mb-6">
@@ -241,8 +241,8 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
               {getRuntime(currentMovie) && <span>{getRuntime(currentMovie)}</span>}
               {getPrimaryGenre(currentMovie) && <span>{getPrimaryGenre(currentMovie)}</span>}
             </div>
-            <p className="text-gray-200 text-base md:text-lg leading-relaxed mb-8 max-w-xl">
-              {truncateOverview(currentMovie.overview, 260)}
+            <p className="text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed mb-4 max-w-xl">
+              {truncateOverview(currentMovie.overview, 130)}
             </p>
             <div className="flex flex-wrap items-center gap-4 mb-10">
               <button

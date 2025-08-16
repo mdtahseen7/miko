@@ -96,7 +96,7 @@ export default function ContentSection({
               <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M8 5v10l7-5z"/>
               </svg>
-              View Details
+              Watch
             </Link>
           </div>
         </div>

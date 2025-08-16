@@ -467,7 +467,7 @@ export default function HomePage() {
           {/* Hover overlay with details */}
           <div className="card-overlay absolute inset-0 flex flex-col justify-end p-4 text-white">
             <div className="space-y-2">
-              <h3 className="font-bold text-lg leading-tight">{title}</h3>
+              <h3 className="font-bold text-sm leading-tight">{title}</h3>
               
               {rating > 0 && (
                 <div className="flex items-center space-x-1">
@@ -478,11 +478,11 @@ export default function HomePage() {
                 </div>
               )}
               
-              {overview && (
+              {/* {overview && (
                 <p className="text-sm text-gray-200 leading-relaxed">
                   {truncateText(overview)}
                 </p>
-              )}
+              )} */}
               
               <Link
                 href={`/details?id=${item.id}&type=${type}`}
@@ -491,7 +491,7 @@ export default function HomePage() {
                 <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M8 5v10l7-5z"/>
                 </svg>
-                View Details
+                Watch
               </Link>
             </div>
           </div>
@@ -542,33 +542,7 @@ export default function HomePage() {
           {/* Hide genre/year filters on home page per request */}
           {currentView !== 'watchlater' && currentView !== 'home' && (
             <div className="mb-8 space-y-4">
-              <div className="flex flex-wrap gap-4">
-                <select
-                  value={selectedGenre}
-                  onChange={(e) => setSelectedGenre(e.target.value)}
-                  className="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-red-500 focus:outline-none"
-                >
-                  <option value="all">All Genres</option>
-                  {movieGenres.map(genre => (
-                    <option key={genre.id} value={genre.id.toString()}>
-                      {genre.name}
-                    </option>
-                  ))}
-                </select>
-                
-                <select
-                  value={selectedYear}
-                  onChange={(e) => setSelectedYear(e.target.value)}
-                  className="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-red-500 focus:outline-none"
-                >
-                  <option value="all">All Years</option>
-                  {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map(year => (
-                    <option key={year} value={year.toString()}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              
               
               {/* Content moderation notice */}
               {currentView !== 'search' && (
@@ -584,9 +558,7 @@ export default function HomePage() {
           
           {/* Content */}
           {loading ? (
-            <div className="flex justify-center items-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-            </div>
+            <div className="py-10" />
           ) : currentView === 'home' ? (
             <div className="space-y-8">
 
@@ -700,8 +672,7 @@ export default function HomePage() {
                   >
                     {loading ? (
                       <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                        <span>Loading...</span>
+                        <span className="tracking-wide">Loading…</span>
                       </>
                     ) : (
                       <>
