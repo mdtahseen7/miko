@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 
 export default function StreamingPlatforms() {
   const platforms = [
@@ -50,7 +51,13 @@ export default function StreamingPlatforms() {
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden">
+    <motion.section 
+      className="py-16 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
+      viewport={{ once: true }}
+    >
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 via-blue-600/20 to-cyan-600/20"></div>
@@ -59,40 +66,87 @@ export default function StreamingPlatforms() {
       
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+        <motion.div 
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true }}
+        >
+          <motion.h2 
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4"
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+          >
             Content Available From
-          </h2>
-          <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
+          </motion.h2>
+          <motion.p 
+            className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            viewport={{ once: true }}
+          >
             Miko aggregates content from various premium streaming platforms
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Platform Logos */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 items-center justify-items-center">
+        <motion.div 
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 items-center justify-items-center"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          viewport={{ once: true }}
+        >
           {platforms.map((platform, index) => (
-            <div
+            <motion.div
               key={platform.name}
-              className="group flex items-center justify-center p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 w-full h-24"
-              style={{
-                animationDelay: `${index * 100}ms`
+              className="group flex items-center justify-center p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 w-full h-24"
+              initial={{ opacity: 0, y: 50, scale: 0.8 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ 
+                duration: 0.5, 
+                delay: 1.0 + index * 0.1,
+                type: "spring",
+                stiffness: 100
               }}
+              viewport={{ once: true }}
+              whileHover={{ 
+                scale: 1.05, 
+                y: -5,
+                boxShadow: "0 20px 40px rgba(147, 51, 234, 0.3)",
+                transition: { duration: 0.3 }
+              }}
+              whileTap={{ scale: 0.95 }}
             >
-              <div className="opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+              <motion.div 
+                className="opacity-70 group-hover:opacity-100 transition-opacity duration-300"
+                whileHover={{ rotate: [0, -5, 5, 0] }}
+                transition={{ duration: 0.5 }}
+              >
                 {platform.logo}
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Additional Text */}
-        <div className="text-center mt-12">
+        <motion.div 
+          className="text-center mt-12"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.5 }}
+          viewport={{ once: true }}
+        >
           <p className="text-gray-400 text-sm sm:text-base max-w-2xl mx-auto">
             Access thousands of movies and TV shows from your favorite streaming services, 
             all in one convenient platform
           </p>
-        </div>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }

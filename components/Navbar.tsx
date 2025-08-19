@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useUser, UserButton, SignInButton, SignUpButton } from '@clerk/nextjs';
 import { usePathname } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface NavbarProps {
   currentView: string;
@@ -49,12 +50,15 @@ export default function Navbar({
   };
 
   return (
-    <header
+    <motion.header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${
         (isScrolled || showSearch)
           ? 'miko-navbar-glass'
           : 'miko-navbar-top'
       }`}
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5 }}
     >
       <div className="w-full px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
@@ -83,7 +87,7 @@ export default function Navbar({
             </Link>
 
             <nav className="hidden lg:flex space-x-7 ml-8">{/* Adjusted spacing */}
-              {['home', 'movies', 'tv', 'anime', 'watchlater'].map((view) => {
+              {['home', 'movies', 'tv', 'anime', 'watchlater'].map((view, index) => {
                 const active = currentView === view || (currentView === 'watch-sports' && view === 'livesports');
                 const label = view === 'watchlater'
                   ? `My List (${watchLaterCount})`
@@ -97,21 +101,30 @@ export default function Navbar({
                   ? 'Anime'
                   : view.charAt(0).toUpperCase() + view.slice(1);
                 return (
-                  <button
+                  <motion.button
                     key={view}
                     onClick={() => handleViewChange(view)}
                     aria-current={active ? 'page' : undefined}
                     className={`relative px-0 py-0 text-sm font-medium tracking-wide transition-all duration-300 group focus:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-400/60 rounded-sm ${
                       active ? '' : 'text-white/80 hover:text-white'
                     }`}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     <span className={`relative inline-block ${active ? 'text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-300 via-purple-300 to-fuchsia-400' : ''}`}>
                       {label}
-                      <span
-                        className={`absolute left-0 right-0 -bottom-1 h-[2px] rounded-full origin-center transition-transform duration-300 bg-gradient-to-r from-fuchsia-400 via-purple-400 to-fuchsia-400 ${active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}
+                      <motion.span
+                        className={`absolute left-0 right-0 -bottom-1 h-[2px] rounded-full origin-center bg-gradient-to-r from-fuchsia-400 via-purple-400 to-fuchsia-400`}
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: active ? 1 : 0 }}
+                        whileHover={{ scaleX: 1 }}
+                        transition={{ duration: 0.3 }}
                       />
                     </span>
-                  </button>
+                  </motion.button>
                 );
               })}
             </nav>
@@ -196,6 +209,6 @@ export default function Navbar({
           </div>
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   fetchMovies, 
   TMDB_IMAGE_BASE_URL,
@@ -172,10 +173,13 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
   }
 
   return (
-    <div 
-      className="relative h-[92vh] bg-black overflow-hidden mb-14 sm:mb-12 lg:mb-16"
+    <motion.div 
+      className="relative h-[85vh] sm:h-[90vh] lg:h-[92vh] bg-black overflow-hidden mb-8 sm:mb-10 lg:mb-16"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
     >
       {/* Background Image */}
       <div className="absolute inset-0">
@@ -225,65 +229,114 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
       )}
 
       {/* Main Content */}
-  <div className="relative z-20 container mx-auto px-6 lg:px-16 h-full flex items-start pt-60 sm:pt-28 md:pt-40 lg:pt-64 pb-24">
-        <div className="max-w-2xl">
-          <div className={`transition-all duration-500 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-            <h1 className="text-4xl md:text-6xl lg:text-5xl font-bold text-white mb-4 leading-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
-              {currentMovie.title}
-            </h1>
-            <div className="flex flex-wrap items-center gap-5 text-sm text-gray-200 font-medium mb-6">
+      <motion.div 
+        className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-16 h-full flex items-start pt-28 sm:pt-24 md:pt-32 lg:pt-48 pb-12 sm:pb-20"
+        initial={{ opacity: 0, x: -100 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8, delay: 0.3 }}
+      >
+        <div className="max-w-xl sm:max-w-2xl">
+          <AnimatePresence mode="wait">
+            <motion.div 
+              key={currentMovieIndex}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              transition={{ duration: 0.5 }}
+            >
+              <motion.h1 
+                className="text-2xl sm:text-3xl md:text-5xl lg:text-5xl font-bold text-white mb-2 sm:mb-3 md:mb-4 leading-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                {currentMovie.title}
+              </motion.h1>
+              <motion.div 
+                className="flex flex-wrap items-center gap-2 sm:gap-3 md:gap-5 text-xs sm:text-sm text-gray-200 font-medium mb-3 sm:mb-4 md:mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
               <span>{formatReleaseYear(currentMovie.release_date)}</span>
               {getCertification(currentMovie) && (
-                <span className="bg-red-600 text-white font-semibold px-2 py-1 rounded-sm text-[11px] leading-none tracking-wide">
+                <span className="bg-red-600 text-white font-semibold px-2 py-1 rounded-sm text-[10px] sm:text-[11px] leading-none tracking-wide">
                   {getCertification(currentMovie)}
                 </span>
               )}
               {getRuntime(currentMovie) && <span>{getRuntime(currentMovie)}</span>}
               {getPrimaryGenre(currentMovie) && <span>{getPrimaryGenre(currentMovie)}</span>}
-            </div>
-            <p className="text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed mb-4 max-w-xl">
-              {truncateOverview(currentMovie.overview, 130)}
-            </p>
-            <div className="flex flex-wrap items-center gap-4 mb-10">
-              <button
-                onClick={handleWatchNow}
-                className="flex items-center gap-2 px-7 py-3 rounded-sm font-semibold text-sm tracking-wide text-white bg-gradient-to-r from-fuchsia-500 via-purple-600 to-fuchsia-600 hover:from-fuchsia-400 hover:via-purple-500 hover:to-fuchsia-500 transition-all duration-300 shadow-lg shadow-fuchsia-900/40 hover:shadow-fuchsia-700/60 focus:outline-none focus:ring-2 focus:ring-fuchsia-400/60"
+              </motion.div>
+              <motion.p 
+                className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed mb-3 sm:mb-4 md:mb-6 max-w-lg"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
               >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M8 5v10l7-5z"/></svg>
-                PLAY
-              </button>
-              <button
-                onClick={() => toggleWatchLater(currentMovie)}
-                className="flex items-center gap-2 bg-black/50 hover:bg-black/70 text-white px-6 py-3 rounded-sm font-semibold text-sm tracking-wide transition-colors border border-white/30 hover:border-white/50"
+                {truncateOverview(currentMovie.overview, 120)}
+              </motion.p>
+              <motion.div 
+                className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6 md:mb-10"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
               >
-                <svg className={`w-5 h-5 ${isInWatchLater(currentMovie) ? 'fill-current' : ''}`} fill={isInWatchLater(currentMovie) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
-                {isInWatchLater(currentMovie) ? 'MY LIST ✓' : '+ MY LIST'}
-              </button>
-            </div>
-            {getTrailer(currentMovie) && (
-              <button
-                onClick={() => {
-                  const t = getTrailer(currentMovie); if (t) window.open(`https://www.youtube.com/watch?v=${t.key}`, '_blank');
-                }}
-                className="flex items-center gap-4 group text-white/90 hover:text-white tracking-wider"
-              >
-                <span className="w-14 h-14 rounded-full flex items-center justify-center border-2 border-white/70 group-hover:border-white transition-colors">
-                  <svg className="w-7 h-7 ml-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M8 5v10l7-5z"/></svg>
-                </span>
-                <span className="text-sm font-medium">WATCH TRAILER</span>
-              </button>
-            )}
-          </div>
+                <motion.button
+                  onClick={handleWatchNow}
+                  className="flex items-center justify-center gap-2 px-5 sm:px-6 md:px-7 py-2.5 sm:py-3 rounded-lg font-semibold text-xs sm:text-sm tracking-wide text-white bg-gradient-to-r from-fuchsia-500 via-purple-600 to-fuchsia-600 hover:from-fuchsia-400 hover:via-purple-500 hover:to-fuchsia-500 transition-all duration-300 shadow-lg shadow-fuchsia-900/40 hover:shadow-fuchsia-700/60 focus:outline-none focus:ring-2 focus:ring-fuchsia-400/60 w-full sm:w-auto"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <svg className="w-4 sm:w-5 h-4 sm:h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M8 5v10l7-5z"/></svg>
+                  PLAY
+                </motion.button>
+                <motion.button
+                  onClick={() => toggleWatchLater(currentMovie)}
+                  className="flex items-center justify-center gap-2 bg-black/50 hover:bg-black/70 text-white px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 rounded-lg font-semibold text-xs sm:text-sm tracking-wide transition-colors border border-white/30 hover:border-white/50 w-full sm:w-auto"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <svg className={`w-4 sm:w-5 h-4 sm:h-5 ${isInWatchLater(currentMovie) ? 'fill-current' : ''}`} fill={isInWatchLater(currentMovie) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+                  {isInWatchLater(currentMovie) ? 'MY LIST ✓' : '+ MY LIST'}
+                </motion.button>
+              </motion.div>
+              {getTrailer(currentMovie) && (
+                <motion.button
+                  onClick={() => {
+                    const t = getTrailer(currentMovie); if (t) window.open(`https://www.youtube.com/watch?v=${t.key}`, '_blank');
+                  }}
+                  className="flex items-center gap-3 sm:gap-4 group text-white/90 hover:text-white tracking-wider"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.0 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <span className="w-10 sm:w-12 md:w-14 h-10 sm:h-12 md:h-14 rounded-full flex items-center justify-center border-2 border-white/70 group-hover:border-white transition-colors">
+                    <svg className="w-5 sm:w-6 md:w-7 h-5 sm:h-6 md:h-7 ml-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M8 5v10l7-5z"/></svg>
+                  </span>
+                  <span className="text-xs sm:text-sm font-medium">WATCH TRAILER</span>
+                </motion.button>
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
-      </div>
+      </motion.div>
 
         {/* Navigation Arrows (Hidden on mobile) */}
         {featuredMovies.length > 1 && (
           <>
-            <button
+            <motion.button
                 onClick={() => goToSlide(currentMovieIndex === 0 ? featuredMovies.length - 1 : currentMovieIndex - 1)}
                 className="hidden lg:flex absolute left-4 top-1/2 -translate-y-1/2 items-center justify-center w-12 h-12 bg-black/60 hover:bg-black/80 text-white rounded-full shadow-lg transition duration-300 hover:scale-110 backdrop-blur-md z-30"
                 aria-label="Previous movie"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 1.2 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 >
                 <svg
                     className="w-6 h-6"
@@ -294,12 +347,17 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
                 >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                 </svg>
-            </button>
+            </motion.button>
 
-            <button
+            <motion.button
                 onClick={() => goToSlide(currentMovieIndex === featuredMovies.length - 1 ? 0 : currentMovieIndex + 1)}
                 className="hidden lg:flex absolute right-4 top-1/2 -translate-y-1/2 items-center justify-center w-12 h-12 bg-black/60 hover:bg-black/80 text-white rounded-full shadow-lg transition duration-300 hover:scale-110 backdrop-blur-md z-30"
                 aria-label="Next movie"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 1.2 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 >
                 <svg
                     className="w-6 h-6"
@@ -310,9 +368,9 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
                 >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
-            </button>
+            </motion.button>
           </>
         )}
-    </div>
+    </motion.div>
   );
 }

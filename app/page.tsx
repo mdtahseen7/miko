@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   fetchMovies, 
   fetchTVShows, 
@@ -423,7 +424,14 @@ export default function HomePage() {
     };
 
     return (
-      <div className="group relative bg-gray-900 rounded-xl overflow-hidden card-hover">
+      <motion.div 
+        className="group relative bg-gray-900 rounded-xl overflow-hidden card-hover"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
+        whileTap={{ scale: 0.95 }}
+      >
         <div className="relative aspect-[5/7]">
           {posterPath ? (
             <Image
@@ -496,12 +504,17 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     );
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <motion.div 
+      className="min-h-screen bg-black text-white"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       {/* Navigation */}
       <Navbar
         currentView={currentView}
@@ -656,11 +669,23 @@ export default function HomePage() {
               </h2>
               
               {/* Content grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8">
-                {getFilteredContent().map((item) => (
-                  <ContentCard key={`${item.id}-${item.type || item.media_type || 'unknown'}`} item={item} />
+              <motion.div 
+                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, staggerChildren: 0.1 }}
+              >
+                {getFilteredContent().map((item, index) => (
+                  <motion.div
+                    key={`${item.id}-${item.type || item.media_type || 'unknown'}`}
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <ContentCard item={item} />
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
               
               {/* Load More Button */}
               {(currentView === 'movies' || currentView === 'tv' || currentView === 'hollywood' || currentView === 'bollywood' || currentView === 'anime' || currentView === 'netflix' || currentView === 'amazonprime') && getFilteredContent().length > 0 && (
@@ -699,6 +724,6 @@ export default function HomePage() {
       </main>
       <StreamingPlatforms />
       <Footer />
-    </div>
+    </motion.div>
   );
 }

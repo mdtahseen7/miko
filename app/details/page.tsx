@@ -299,65 +299,65 @@ function DetailsPageContent() {
         </div>
 
         {/* Back to Home Button - Fixed positioning on the left */}
-        <div className="fixed top-24 left-4 z-50">
+        <div className="fixed top-20 sm:top-24 left-2 sm:left-4 z-50">
           <Link
             href="/"
-            className="flex items-center space-x-2 bg-black/90 hover:bg-black backdrop-blur-sm text-white px-4 py-3 rounded-xl transition-all duration-300 border border-white/30 hover:border-white/50 shadow-2xl hover:shadow-3xl group"
+            className="flex items-center space-x-1.5 sm:space-x-2 bg-black/90 hover:bg-black backdrop-blur-sm text-white px-3 sm:px-4 py-2 sm:py-3 rounded-xl transition-all duration-300 border border-white/30 hover:border-white/50 shadow-2xl hover:shadow-3xl group"
           >
-            <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 sm:w-5 h-4 sm:h-5 group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            <span className="font-medium">Back to Home</span>
+            <span className="font-medium text-xs sm:text-sm">Back to Home</span>
           </Link>
         </div>
 
         {/* Content Overlay */}
-        <div className="relative z-10 flex items-center h-full pt-24 pb-10">
-          <div className="container mx-auto px-4 lg:px-16 max-w-7xl">
-            <div className="max-w-2xl">
+        <div className="relative z-10 flex items-center h-full pt-20 sm:pt-24 pb-8 sm:pb-10">
+          <div className="container mx-auto px-3 sm:px-4 lg:px-16 max-w-7xl">
+            <div className="max-w-xl sm:max-w-2xl">
               {/* Title */}
-              <h1 className="font-bold leading-tight text-5xl lg:text-6xl mb-6 drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
+              <h1 className="font-bold leading-tight text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl mb-4 sm:mb-6 drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
                 {getTitle()}
               </h1>
               {/* Meta Row */}
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-200 mb-6">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 md:gap-4 text-xs sm:text-sm text-gray-200 mb-4 sm:mb-6">
                 {getReleaseYear() && <span className="opacity-90">{getReleaseYear()}</span>}
                 {getCertification() && (
-                  <span className="bg-red-600 text-white font-semibold px-2 py-1 rounded-sm text-[11px] leading-none">{getCertification()}</span>
+                  <span className="bg-red-600 text-white font-semibold px-2 py-1 rounded-sm text-[10px] sm:text-[11px] leading-none">{getCertification()}</span>
                 )}
                 {getRuntime() && <span className="opacity-90">{getRuntime()}</span>}
                 {getPrimaryGenre() && <span className="opacity-90">{getPrimaryGenre()}</span>}
               </div>
               {/* Overview */}
-              <p className="text-gray-200 text-base lg:text-lg leading-relaxed mb-8 line-clamp-[10] max-h-[15rem]">
+              <p className="text-gray-200 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed mb-6 sm:mb-8 line-clamp-[10] max-h-[15rem]">
                 {content.overview}
               </p>
               {/* Buttons */}
-              <div className="flex flex-wrap gap-4 mb-10">
+              <div className="flex flex-wrap gap-3 sm:gap-4 mb-6 sm:mb-10">
                 <button
                   onClick={() => handleWatchNow()}
-                  className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-7 py-3 rounded-sm font-semibold text-sm tracking-wide transition-all shadow-md hover:shadow-lg"
+                  className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 sm:px-6 md:px-7 py-2.5 sm:py-3 rounded-sm font-semibold text-xs sm:text-sm tracking-wide transition-all shadow-md hover:shadow-lg"
                 >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M8 5v10l7-5z"/></svg>
+                  <svg className="w-4 sm:w-5 h-4 sm:h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M8 5v10l7-5z"/></svg>
                   PLAY
                 </button>
                 <button
                   onClick={addToWatchLater}
-                  className="flex items-center gap-2 bg-black/50 hover:bg-black/70 text-white px-7 py-3 rounded-sm font-semibold text-sm tracking-wide transition-all border border-white/20 hover:border-white/40"
+                  className="flex items-center gap-2 bg-black/50 hover:bg-black/70 text-white px-5 sm:px-6 md:px-7 py-2.5 sm:py-3 rounded-sm font-semibold text-xs sm:text-sm tracking-wide transition-all border border-white/20 hover:border-white/40"
                 >
-                  <svg className={`w-5 h-5 ${isInWatchLater() ? 'fill-current' : ''}`} fill={isInWatchLater() ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+                  <svg className={`w-4 sm:w-5 h-4 sm:h-5 ${isInWatchLater() ? 'fill-current' : ''}`} fill={isInWatchLater() ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
                   {isInWatchLater() ? 'MY LIST ✓' : '+ MY LIST'}
                 </button>
               </div>
               {trailer && (
                 <button
                   onClick={() => window.open(`https://www.youtube.com/watch?v=${trailer.key}`, '_blank')}
-                  className="flex items-center gap-3 group text-white/90 hover:text-white transition-colors"
+                  className="flex items-center gap-2 sm:gap-3 group text-white/90 hover:text-white transition-colors"
                 >
-                  <span className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-white/70 group-hover:border-white transition-colors">
-                    <svg className="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M8 5v10l7-5z"/></svg>
+                  <span className="w-8 sm:w-9 md:w-11 h-8 sm:h-9 md:h-11 rounded-full flex items-center justify-center border-2 border-white/70 group-hover:border-white transition-colors">
+                    <svg className="w-3 sm:w-4 md:w-5 h-3 sm:h-4 md:h-5 ml-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M8 5v10l7-5z"/></svg>
                   </span>
-                  <span className="text-sm tracking-widest font-medium">WATCH TRAILER</span>
+                  <span className="text-xs sm:text-sm tracking-widest font-medium">WATCH TRAILER</span>
                 </button>
               )}
             </div>
@@ -367,19 +367,19 @@ function DetailsPageContent() {
 
       {/* Episodes Section for TV Shows */}
   {contentType === 'tv' && content && 'number_of_seasons' in content && (
-        <div className="py-12 bg-black/50">
+        <div className="py-8 sm:py-10 md:py-12 bg-black/50">
           <div className="container mx-auto px-4 lg:px-8">
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold mb-4">Episodes</h2>
+            <div className="mb-6 sm:mb-8">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">Episodes</h2>
               
               {/* Season Selector */}
               {'number_of_seasons' in content && content.number_of_seasons > 1 && (
-                <div className="flex flex-wrap gap-2 mb-6">
+                <div className="flex flex-wrap gap-2 mb-4 sm:mb-6">
                   {Array.from({ length: content.number_of_seasons }, (_, i) => i + 1).map(seasonNum => (
                     <button
                       key={seasonNum}
                       onClick={() => setSelectedSeason(seasonNum)}
-                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                      className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium text-xs sm:text-sm transition-colors ${
                         selectedSeason === seasonNum
                           ? 'bg-red-600 text-white'
                           : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
@@ -396,11 +396,11 @@ function DetailsPageContent() {
             {seasonData?.episodes && (
               <div className="episodes-slider group">
                 <div className="overflow-x-auto scrollbar-hide">
-                  <div className="flex space-x-6 pb-6" style={{ width: 'max-content' }}>
+                  <div className="flex space-x-4 sm:space-x-6 pb-4 sm:pb-6" style={{ width: 'max-content' }}>
                     {seasonData.episodes.map((episode: Episode) => (
                       <div
                         key={episode.id}
-                        className="group/card bg-gray-900/50 rounded-xl overflow-hidden hover:bg-gray-800/50 transition-all duration-300 cursor-pointer border border-gray-800 hover:border-gray-600 flex-shrink-0 w-72 hover:scale-105 hover:shadow-2xl"
+                        className="group/card bg-gray-900/50 rounded-xl overflow-hidden hover:bg-gray-800/50 transition-all duration-300 cursor-pointer border border-gray-800 hover:border-gray-600 flex-shrink-0 w-64 sm:w-72 hover:scale-105 hover:shadow-2xl"
                         onClick={() => handleWatchNow(episode.episode_number)}
                       >
                         <div className="relative aspect-video bg-gray-800">
@@ -410,11 +410,11 @@ function DetailsPageContent() {
                               alt={episode.name}
                               fill
                               className="object-cover group-hover/card:scale-105 transition-transform duration-300"
-                              sizes="320px"
+                              sizes="288px"
                             />
                           ) : (
                             <div className="flex items-center justify-center h-full text-gray-500">
-                              <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-8 sm:w-12 h-8 sm:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                               </svg>
                             </div>
@@ -422,25 +422,25 @@ function DetailsPageContent() {
                           
                           {/* Play Overlay */}
                           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                            <div className="bg-red-600 rounded-full p-3 transform scale-75 group-hover/card:scale-100 transition-transform duration-300">
-                              <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 20 20">
+                            <div className="bg-red-600 rounded-full p-2 sm:p-3 transform scale-75 group-hover/card:scale-100 transition-transform duration-300">
+                              <svg className="w-6 sm:w-8 h-6 sm:h-8 text-white ml-1" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M8 5v10l7-5z"/>
                               </svg>
                             </div>
                           </div>
 
                           {/* Episode Number */}
-                          <div className="absolute top-3 left-3 bg-black/80 backdrop-blur-sm rounded-lg px-2 py-1 text-sm font-semibold">
+                          <div className="absolute top-2 sm:top-3 left-2 sm:left-3 bg-black/80 backdrop-blur-sm rounded-lg px-2 py-1 text-xs sm:text-sm font-semibold">
                             Episode {episode.episode_number}
                           </div>
                         </div>
 
-                        <div className="p-4">
-                          <h3 className="font-semibold text-lg mb-2 line-clamp-1 group-hover/card:text-red-400 transition-colors">
+                        <div className="p-3 sm:p-4">
+                          <h3 className="font-semibold text-sm sm:text-base md:text-lg mb-2 line-clamp-1 group-hover/card:text-red-400 transition-colors">
                             {episode.name}
                           </h3>
                           
-                          <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
+                          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 text-xs sm:text-sm text-gray-400 mb-2 sm:mb-3">
                             {episode.air_date && (
                               <span>{new Date(episode.air_date).getFullYear()}</span>
                             )}
@@ -458,7 +458,7 @@ function DetailsPageContent() {
                           </div>
                           
                           {episode.overview && (
-                            <p className="text-gray-400 text-sm line-clamp-3 leading-relaxed">
+                            <p className="text-gray-400 text-xs sm:text-sm line-clamp-3 leading-relaxed">
                               {episode.overview}
                             </p>
                           )}
@@ -510,15 +510,15 @@ function DetailsPageContent() {
 
       {/* Recommendations Section */}
       {recommendations.length > 0 && (
-        <div className="py-14 bg-black/40 border-t border-white/5">
+        <div className="py-8 sm:py-10 md:py-14 bg-black/40 border-t border-white/5">
           <div className="container mx-auto px-4 lg:px-8">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-bold tracking-wide bg-gradient-to-r from-fuchsia-300 via-purple-300 to-fuchsia-400 bg-clip-text text-transparent">Recommended for You</h2>
-              <span className="text-xs uppercase tracking-widest text-gray-400">Based on this {contentType === 'movie' ? 'movie' : 'show'}</span>
+            <div className="flex items-center justify-between mb-6 sm:mb-8">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-wide bg-gradient-to-r from-fuchsia-300 via-purple-300 to-fuchsia-400 bg-clip-text text-transparent">Recommended for You</h2>
+              <span className="text-[10px] sm:text-xs uppercase tracking-widest text-gray-400">Based on this {contentType === 'movie' ? 'movie' : 'show'}</span>
             </div>
             <div className="episodes-slider group">
               <div className="overflow-x-auto scrollbar-hide">
-                <div className="flex space-x-6 pb-4" style={{ width: 'max-content' }}>
+                <div className="flex space-x-4 sm:space-x-6 pb-3 sm:pb-4" style={{ width: 'max-content' }}>
                   {recommendations.map((item: any) => {
                     const title = item.title || item.name;
                     const year = (item.release_date || item.first_air_date || '').slice(0,4);
@@ -527,7 +527,7 @@ function DetailsPageContent() {
                       <Link
                         key={item.id}
                         href={`/details?id=${item.id}&type=${mediaType}`}
-                        className="group/card w-52 flex-shrink-0 rounded-xl overflow-hidden bg-gray-900/60 border border-white/10 hover:border-fuchsia-400/40 transition-all hover:shadow-[0_4px_18px_-4px_rgba(168,85,247,0.45)]"
+                        className="group/card w-44 sm:w-48 md:w-52 flex-shrink-0 rounded-xl overflow-hidden bg-gray-900/60 border border-white/10 hover:border-fuchsia-400/40 transition-all hover:shadow-[0_4px_18px_-4px_rgba(168,85,247,0.45)]"
                       >
                         <div className="relative aspect-[2/3]">
                           <Image
@@ -539,15 +539,15 @@ function DetailsPageContent() {
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity" />
                           {item.vote_average > 0 && (
-                            <div className="absolute top-2 left-2 bg-black/70 backdrop-blur-sm rounded-md px-2 py-1 text-xs font-semibold flex items-center gap-1">
-                              <svg className="w-3 h-3 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            <div className="absolute top-2 left-2 bg-black/70 backdrop-blur-sm rounded-md px-2 py-1 text-[10px] sm:text-xs font-semibold flex items-center gap-1">
+                              <svg className="w-2.5 sm:w-3 h-2.5 sm:h-3 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                               {item.vote_average.toFixed(1)}
                             </div>
                           )}
                         </div>
-                        <div className="p-3 space-y-1">
-                          <h3 className="text-sm font-semibold leading-snug line-clamp-2 group-hover/card:text-fuchsia-300 transition-colors">{title}</h3>
-                          <div className="flex items-center justify-between text-[11px] text-gray-400">
+                        <div className="p-2.5 sm:p-3 space-y-1">
+                          <h3 className="text-xs sm:text-sm font-semibold leading-snug line-clamp-2 group-hover/card:text-fuchsia-300 transition-colors">{title}</h3>
+                          <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-gray-400">
                             <span>{year}</span>
                             {item.vote_average > 0 && (
                               <span className="text-gray-300">★ {item.vote_average.toFixed(1)}</span>

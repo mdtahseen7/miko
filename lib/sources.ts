@@ -1,15 +1,5 @@
 export const availableSources = [
     {
-        id: 'pstream',
-        name: 'P-Stream',
-        isFrench: false,
-        requiresNoSandbox: false,
-        urls: {
-            movie: 'https://iframe.pstream.mov/media/tmdb-movie-{id}',
-            tv: 'https://iframe.pstream.mov/media/tmdb-tv-{id}/{season}/{episode}'
-        }
-    },
-    {
         id: 'multiembed',
         name: 'MultiEmbed',
         isFrench: false,
@@ -29,6 +19,17 @@ export const availableSources = [
             tv: 'https://moviesapi.club/tv/{id}-{season}-{episode}'
         }
     },
+    {
+        id: 'pstream',
+        name: 'P-Stream',
+        isFrench: false,
+        requiresNoSandbox: false,
+        urls: {
+            movie: 'https://iframe.pstream.mov/media/tmdb-movie-{id}',
+            tv: 'https://iframe.pstream.mov/media/tmdb-tv-{id}/{season}/{episode}'
+        }
+    },
+    
     {
         id: 'embedsu',
         name: 'EmbedSU',
