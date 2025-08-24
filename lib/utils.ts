@@ -3,6 +3,119 @@ export const TMDB_API_KEY = '1070730380f5fee0d87cf0382670b255';
 export const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 export const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
+// AniList API configuration
+const ANILIST_API_URL = 'https://graphql.anilist.co';
+
+// AniList GraphQL queries
+const ANILIST_SEARCH_QUERY = `
+  query ($search: String) {
+    Media(search: $search, type: ANIME) {
+      id
+      title {
+        romaji
+        english
+        native
+      }
+      episodes
+      format
+      status
+      seasonYear
+      studios {
+        nodes {
+          name
+        }
+      }
+    }
+  }
+`;
+
+const ANILIST_EPISODES_QUERY = `
+  query ($id: Int) {
+    Media(id: $id, type: ANIME) {
+      id
+      episodes
+      title {
+        romaji
+        english
+      }
+      streamingEpisodes {
+        title
+        url
+      }
+      nextAiringEpisode {
+        episode
+      }
+    }
+  }
+`;
+
+// Check if content is anime based on genres/keywords
+export const isAnimeContent = (item: any): boolean => {
+  if (!item) return false;
+  
+  const genres = item.genres || [];
+  const keywords = item.keywords?.results || [];
+  const originCountry = item.origin_country || [];
+  
+  // Check for anime indicators
+  const hasAnimeGenre = genres.some((genre: any) => 
+    genre.name?.toLowerCase().includes('animation')
+  );
+  
+  const hasAnimeKeyword = keywords.some((keyword: any) => 
+    keyword.name?.toLowerCase().includes('anime') ||
+    keyword.name?.toLowerCase().includes('manga')
+  );
+  
+  const isJapanese = originCountry.includes('JP');
+  
+  return hasAnimeGenre && (hasAnimeKeyword || isJapanese);
+};
+
+// Search for anime on AniList
+const searchAniListAnime = async (title: string) => {
+  try {
+    const response = await fetch(ANILIST_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: ANILIST_SEARCH_QUERY,
+        variables: { search: title }
+      })
+    });
+    
+    const data = await response.json();
+    return data.data?.Media || null;
+  } catch (error) {
+    console.warn('AniList search failed:', error);
+    return null;
+  }
+};
+
+// Get AniList episode data
+const getAniListEpisodes = async (aniListId: number) => {
+  try {
+    const response = await fetch(ANILIST_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: ANILIST_EPISODES_QUERY,
+        variables: { id: aniListId }
+      })
+    });
+    
+    const data = await response.json();
+    return data.data?.Media || null;
+  } catch (error) {
+    console.warn('AniList episodes fetch failed:', error);
+    return null;
+  }
+};
+
 // Movie/TV API functions
 export const fetchMovies = async (page = 1) => {
   try {
@@ -82,7 +195,6 @@ export const searchContent = async (query: string, type = 'multi') => {
 // Netflix content (using watch provider ID 8 for Netflix)
 export const fetchNetflixContent = async (page = 1) => {
   try {
-    // Try to fetch both movies and TV shows from Netflix
     const [moviesResponse, tvResponse] = await Promise.all([
       fetch(`${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&page=${page}&language=en-US&with_watch_providers=8&watch_region=US&sort_by=popularity.desc`),
       fetch(`${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}&page=${page}&language=en-US&with_watch_providers=8&watch_region=US&sort_by=popularity.desc`)
@@ -93,23 +205,21 @@ export const fetchNetflixContent = async (page = 1) => {
       tvResponse.json()
     ]);
     
-    // Combine movies and TV shows, prioritizing movies
     let combinedResults = [
       ...(moviesData.results || []),
       ...(tvData.results || [])
     ];
     
-    // If no results from watch providers, fallback to popular content with Netflix-related keywords
     if (combinedResults.length === 0) {
       console.log('No Netflix watch provider results, trying fallback...');
       const fallbackResponse = await fetch(
-        `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&page=${page}&language=en-US&sort_by=popularity.desc&with_companies=2452` // Netflix company ID
+        `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&page=${page}&language=en-US&sort_by=popularity.desc&with_companies=2452`
       );
       const fallbackData = await fallbackResponse.json();
       combinedResults = fallbackData.results || [];
     }
     
-    return { results: combinedResults.slice(0, 20) }; // Limit to 20 results per page
+    return { results: combinedResults.slice(0, 20) };
   } catch (error) {
     console.error('Error fetching Netflix content:', error);
     return { results: [] };
@@ -119,7 +229,6 @@ export const fetchNetflixContent = async (page = 1) => {
 // Amazon Prime content (using watch provider ID 119 for Amazon Prime Video)
 export const fetchAmazonPrimeContent = async (page = 1) => {
   try {
-    // First try Amazon Prime watch provider
     let results: any[] = [];
     
     try {
@@ -130,15 +239,14 @@ export const fetchAmazonPrimeContent = async (page = 1) => {
       if (data.results && data.results.length > 0) {
         results = data.results;
       }
-    } catch (error) {
+    } catch {
       console.log('Amazon Prime watch provider failed, trying fallback');
     }
     
-    // If no results from watch provider, use Amazon Studios company
     if (results.length === 0) {
       try {
         const response = await fetch(
-          `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&page=${page}&language=en-US&sort_by=popularity.desc&with_companies=1024` // Amazon Studios
+          `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&page=${page}&language=en-US&sort_by=popularity.desc&with_companies=1024`
         );
         const data = await response.json();
         results = data.results || [];
@@ -147,7 +255,6 @@ export const fetchAmazonPrimeContent = async (page = 1) => {
       }
     }
     
-    // If still no results, get some popular action/drama movies as Amazon-style content
     if (results.length === 0) {
       try {
         const response = await fetch(
@@ -168,14 +275,90 @@ export const fetchAmazonPrimeContent = async (page = 1) => {
   }
 };
 
+// 🔥 DETAILS FETCH WITH ANIME PATCH
 export const fetchContentDetails = async (id: string, type: 'movie' | 'tv') => {
   try {
-    // Add release_dates (movies) & content_ratings (tv) to append_to_response for certification display
     const extra = type === 'movie' ? 'release_dates' : 'content_ratings';
     const response = await fetch(
       `${TMDB_BASE_URL}/${type}/${id}?api_key=${TMDB_API_KEY}&append_to_response=images,videos,credits,similar,keywords,${extra}&language=en-US&include_image_language=en,null`
     );
-    return await response.json();
+    const data = await response.json();
+
+    // ✅ Anime patch: fix season structure using AniList data
+    if (type === 'tv' && isAnimeContent(data)) {
+      console.log(`[AniList] Enhancing season structure for anime: ${data.name}`);
+      
+      // Search for the anime on AniList to get correct episode count
+      const aniListData = await searchAniListAnime(data.name || data.original_name);
+      
+      if (aniListData && aniListData.episodes) {
+        const totalEpisodes = aniListData.episodes;
+        console.log(`[AniList] Found ${totalEpisodes} total episodes for ${data.name}`);
+        
+        // Determine number of seasons based on episode count and existing TMDB seasons
+        let estimatedSeasons = Math.max(
+          Math.ceil(totalEpisodes / 12), // Assume ~12 episodes per season
+          data.number_of_seasons || 1,   // Use TMDB if higher
+          2 // Minimum 2 seasons if we have enough episodes
+        );
+        
+        // For very long series, cap at reasonable number
+        if (totalEpisodes > 100) {
+          estimatedSeasons = Math.min(estimatedSeasons, Math.ceil(totalEpisodes / 24));
+        }
+        
+        // Create proper season structure
+        const episodesPerSeason = Math.ceil(totalEpisodes / estimatedSeasons);
+        const seasons = [];
+        
+        for (let i = 1; i <= estimatedSeasons; i++) {
+          const seasonStartEp = (i - 1) * episodesPerSeason + 1;
+          const seasonEndEp = Math.min(i * episodesPerSeason, totalEpisodes);
+          const episodeCount = seasonEndEp - seasonStartEp + 1;
+          
+          // Only add season if it has episodes
+          if (episodeCount > 0) {
+            seasons.push({
+              id: `${data.id}-season-${i}`,
+              season_number: i,
+              episode_count: episodeCount,
+              air_date: data.first_air_date || null,
+              name: `Season ${i}`,
+              overview: `Episodes ${seasonStartEp}-${seasonEndEp}`,
+              poster_path: data.poster_path,
+            });
+          }
+        }
+        
+        console.log(`[AniList] Created ${seasons.length} seasons with proper episode distribution`);
+        
+        // Update the data with corrected season structure
+        data.seasons = seasons;
+        data.number_of_seasons = seasons.length;
+        data.total_episodes = totalEpisodes;
+        data._anilist_enhanced = true; // Flag for debugging
+      } else {
+        // Fallback: clean up existing TMDB seasons
+        data.seasons = (data.seasons || [])
+          .filter((s: any) => s.season_number > 0) // remove specials
+          .map((s: any) => ({
+            id: s.id,
+            season_number: s.season_number,
+            episode_count: s.episode_count,
+            air_date: s.air_date,
+            name: s.name,
+            overview: s.overview,
+            poster_path: s.poster_path,
+          }));
+
+        data.total_episodes = data.seasons.reduce(
+          (sum: number, s: any) => sum + (s.episode_count || 0),
+          0
+        );
+      }
+    }
+
+    return data;
   } catch (error) {
     console.error('Error fetching content details:', error);
     return null;
@@ -194,8 +377,91 @@ export const fetchGenres = async (type: 'movie' | 'tv') => {
   }
 };
 
+// 📺 Season details with AniList episode numbering for anime
 export const fetchSeasonDetails = async (id: string, seasonNumber: number) => {
   try {
+    if (seasonNumber === 0) return null;
+    
+    console.log(`[Debug] Fetching season ${seasonNumber} for content ID: ${id}`);
+    
+    // Get TMDB show details to check if it's anime
+    const showResponse = await fetch(
+      `${TMDB_BASE_URL}/tv/${id}?api_key=${TMDB_API_KEY}&append_to_response=keywords`
+    );
+    const showData = await showResponse.json();
+    
+    console.log(`[Debug] Show data:`, {
+      name: showData.name,
+      origin_country: showData.origin_country,
+      genres: showData.genres?.map((g: any) => g.name),
+      isAnime: isAnimeContent(showData)
+    });
+    
+    // Check if this is anime content
+    if (isAnimeContent(showData)) {
+      console.log(`[AniList] Detected anime: ${showData.name}, fetching episode data for season ${seasonNumber}`);
+      
+      // Get all episodes from TMDB Season 1 (where anime episodes usually are)
+      try {
+        const seasonResponse = await fetch(
+          `${TMDB_BASE_URL}/tv/${id}/season/1?api_key=${TMDB_API_KEY}&language=en-US`
+        );
+        const seasonData = await seasonResponse.json();
+        
+        console.log(`[Debug] TMDB Season 1 data:`, {
+          episodes: seasonData.episodes?.length || 0,
+          season_number: seasonData.season_number
+        });
+        
+        if (seasonData.episodes && seasonData.episodes.length > 0) {
+          const allEpisodes = seasonData.episodes;
+          
+          // Simple division - assume 12 episodes per season
+          const episodesPerSeason = 12;
+          const seasonStartIndex = (seasonNumber - 1) * episodesPerSeason;
+          const seasonEndIndex = seasonStartIndex + episodesPerSeason;
+          
+          // Get episodes for this season
+          const seasonEpisodes = allEpisodes.slice(seasonStartIndex, seasonEndIndex);
+          
+          console.log(`[Debug] Season ${seasonNumber} episodes:`, {
+            startIndex: seasonStartIndex,
+            endIndex: seasonEndIndex,
+            episodeCount: seasonEpisodes.length
+          });
+          
+          if (seasonEpisodes.length > 0) {
+            // Renumber episodes for this season
+            const episodes = seasonEpisodes.map((episode: any, index: number) => ({
+              ...episode,
+              episode_number: index + 1, // Per-season numbering (1, 2, 3...)
+              season_number: seasonNumber,
+              original_episode_number: episode.episode_number // Keep original for reference
+            }));
+            
+            console.log(`[Debug] Generated ${episodes.length} episodes for season ${seasonNumber}`);
+            
+            return {
+              id: `season-${seasonNumber}`,
+              season_number: seasonNumber,
+              name: `Season ${seasonNumber}`,
+              episodes,
+              _anime_enhanced: true
+            };
+          } else {
+            console.log(`[Debug] No episodes found for season ${seasonNumber}`);
+            return { episodes: [] };
+          }
+        }
+      } catch (error) {
+        console.error(`[Debug] Error fetching TMDB season 1:`, error);
+      }
+    } else {
+      console.log(`[Debug] Not anime content, using regular TMDB fetch`);
+    }
+    
+    // For non-anime content or if anime logic fails, get regular TMDB season data
+    console.log(`[Debug] Falling back to regular TMDB season ${seasonNumber}`);
     const response = await fetch(
       `${TMDB_BASE_URL}/tv/${id}/season/${seasonNumber}?api_key=${TMDB_API_KEY}&language=en-US`
     );
@@ -206,6 +472,7 @@ export const fetchSeasonDetails = async (id: string, seasonNumber: number) => {
   }
 };
 
+// Sports
 export const fetchSportsMatches = async () => {
   try {
     const response = await fetch('https://streamed.su/api/matches');
@@ -249,7 +516,7 @@ export const getLocalStorage = (key: string, defaultValue: any = null) => {
   try {
     const item = window.localStorage.getItem(key);
     return item ? JSON.parse(item) : defaultValue;
-  } catch (error) {
+  } catch {
     return defaultValue;
   }
 };
@@ -275,10 +542,8 @@ export const blockedMovieIds = [
   "4435", "205077", "304157", "474084", "14478", "421701", "960876"
 ];
 
-// Content moderation - Adult content genre IDs and keywords
-export const adultGenreIds = [
-  // No specific adult genre IDs in TMDB, but we'll filter by keywords and titles
-];
+// Adult filter
+export const adultGenreIds: number[] = [];
 
 export const adultContentKeywords = [
   'xxx', 'porn', 'erotic', 'explicit', 'adult', 'sex', 'nude', 'naked', 
@@ -288,35 +553,26 @@ export const adultContentKeywords = [
   'brothel', 'prostitute', 'call girl', 'gigolo', 'swinger'
 ];
 
-// Function to check if content contains adult material
 export const isAdultContent = (item: any): boolean => {
   if (!item) return false;
   
   const title = (item.title || item.name || '').toLowerCase();
   const overview = (item.overview || '').toLowerCase();
   
-  // Check for adult keywords in title or overview
   const hasAdultKeywords = adultContentKeywords.some(keyword => 
     title.includes(keyword) || overview.includes(keyword)
   );
   
-  // Check for adult certification (R rating for very explicit content)
   const isExplicitRating = item.adult === true;
   
-  // Additional check for genre combinations that might indicate adult content
   const genreIds = item.genre_ids || [];
-  const hasAdultGenreCombination = genreIds.includes(18) && // Drama
-    (genreIds.includes(10749) || // Romance  
-     genreIds.includes(53)); // Thriller - sometimes combined for adult content
+  const hasAdultGenreCombination = genreIds.includes(18) && 
+    (genreIds.includes(10749) || genreIds.includes(53));
   
   return hasAdultKeywords || isExplicitRating || (hasAdultGenreCombination && hasAdultKeywords);
 };
 
-// Filter function that can be toggled
 export const filterAdultContent = (items: any[], allowAdultContent: boolean = false): any[] => {
-  if (allowAdultContent) {
-    return items;
-  }
-  
+  if (allowAdultContent) return items;
   return items.filter(item => !isAdultContent(item));
 };
