@@ -275,7 +275,7 @@ export const fetchAmazonPrimeContent = async (page = 1) => {
   }
 };
 
-// 🔥 DETAILS FETCH WITH ANIME PATCH
+//  DETAILS FETCH WITH ANIME MAPPING
 export const fetchContentDetails = async (id: string, type: 'movie' | 'tv') => {
   try {
     const extra = type === 'movie' ? 'release_dates' : 'content_ratings';
@@ -284,78 +284,78 @@ export const fetchContentDetails = async (id: string, type: 'movie' | 'tv') => {
     );
     const data = await response.json();
 
-    // ✅ Anime patch: fix season structure using AniList data
+    // Only process anime TV shows with the new mapping system
     if (type === 'tv' && isAnimeContent(data)) {
-      console.log(`[AniList] Enhancing season structure for anime: ${data.name}`);
+      console.log(`[Anime Mapper] Detected anime: ${data.name}, applying AniList+TMDB mapping`);
       
-      // Search for the anime on AniList to get correct episode count
-      const aniListData = await searchAniListAnime(data.name || data.original_name);
-      
-      if (aniListData && aniListData.episodes) {
-        const totalEpisodes = aniListData.episodes;
-        console.log(`[AniList] Found ${totalEpisodes} total episodes for ${data.name}`);
+      try {
+        // Import the anime mapper functions dynamically
+        const { getAnimeSeasonBreakdown, mapAniListToTmdb } = await import('./animeMapper');
         
-        // Determine number of seasons based on episode count and existing TMDB seasons
-        let estimatedSeasons = Math.max(
-          Math.ceil(totalEpisodes / 12), // Assume ~12 episodes per season
-          data.number_of_seasons || 1,   // Use TMDB if higher
-          2 // Minimum 2 seasons if we have enough episodes
-        );
+        // Get AniList season breakdown
+        const aniListSeasons = await getAnimeSeasonBreakdown(data.name || data.original_name);
         
-        // For very long series, cap at reasonable number
-        if (totalEpisodes > 100) {
-          estimatedSeasons = Math.min(estimatedSeasons, Math.ceil(totalEpisodes / 24));
-        }
-        
-        // Create proper season structure
-        const episodesPerSeason = Math.ceil(totalEpisodes / estimatedSeasons);
-        const seasons = [];
-        
-        for (let i = 1; i <= estimatedSeasons; i++) {
-          const seasonStartEp = (i - 1) * episodesPerSeason + 1;
-          const seasonEndEp = Math.min(i * episodesPerSeason, totalEpisodes);
-          const episodeCount = seasonEndEp - seasonStartEp + 1;
+        if (aniListSeasons.length > 0) {
+          // Get all TMDB episodes from multiple seasons
+          let allTmdbEpisodes: any[] = [];
           
-          // Only add season if it has episodes
-          if (episodeCount > 0) {
-            seasons.push({
-              id: `${data.id}-season-${i}`,
-              season_number: i,
-              episode_count: episodeCount,
-              air_date: data.first_air_date || null,
-              name: `Season ${i}`,
-              overview: `Episodes ${seasonStartEp}-${seasonEndEp}`,
-              poster_path: data.poster_path,
-            });
+          // Try to get episodes from TMDB seasons (usually all in Season 1 for anime)
+          for (let seasonNum = 1; seasonNum <= 3; seasonNum++) {
+            try {
+              const seasonResponse = await fetch(
+                `${TMDB_BASE_URL}/tv/${id}/season/${seasonNum}?api_key=${TMDB_API_KEY}&language=en-US`
+              );
+              const seasonData = await seasonResponse.json();
+              
+              if (seasonData.episodes && seasonData.episodes.length > 0) {
+                allTmdbEpisodes = [...allTmdbEpisodes, ...seasonData.episodes];
+                console.log(`[Anime Mapper] Found ${seasonData.episodes.length} episodes in TMDB Season ${seasonNum}`);
+              } else {
+                break; // No more seasons
+              }
+            } catch (error) {
+              break; // Season doesn't exist
+            }
+          }
+          
+          console.log(`[Anime Mapper] Total TMDB episodes: ${allTmdbEpisodes.length}`);
+          
+          if (allTmdbEpisodes.length > 0) {
+            // Use the mapper to combine AniList structure with TMDB episode details
+            const mappedData = mapAniListToTmdb(aniListSeasons, allTmdbEpisodes, data);
+            
+            if (mappedData) {
+              console.log(`[Anime Mapper] Successfully mapped anime with ${mappedData.seasons.length} seasons`);
+              return mappedData;
+            }
           }
         }
         
-        console.log(`[AniList] Created ${seasons.length} seasons with proper episode distribution`);
-        
-        // Update the data with corrected season structure
-        data.seasons = seasons;
-        data.number_of_seasons = seasons.length;
-        data.total_episodes = totalEpisodes;
-        data._anilist_enhanced = true; // Flag for debugging
-      } else {
-        // Fallback: clean up existing TMDB seasons
-        data.seasons = (data.seasons || [])
-          .filter((s: any) => s.season_number > 0) // remove specials
-          .map((s: any) => ({
-            id: s.id,
-            season_number: s.season_number,
-            episode_count: s.episode_count,
-            air_date: s.air_date,
-            name: s.name,
-            overview: s.overview,
-            poster_path: s.poster_path,
-          }));
-
-        data.total_episodes = data.seasons.reduce(
-          (sum: number, s: any) => sum + (s.episode_count || 0),
-          0
-        );
+        console.log(`[Anime Mapper] AniList mapping failed, falling back to original anime patch`);
+      } catch (error) {
+        console.error('[Anime Mapper] Error during anime mapping:', error);
+        console.log('[Anime Mapper] Falling back to original anime patch');
       }
+      
+      // Fallback to original anime patch if mapping fails
+      data.seasons = (data.seasons || [])
+        .filter((s: any) => s.season_number > 0) // remove specials
+        .map((s: any) => ({
+          id: s.id,
+          season_number: s.season_number,
+          episode_count: s.episode_count,
+          air_date: s.air_date,
+          name: s.name,
+          overview: s.overview,
+          poster_path: s.poster_path,
+        }));
+
+      data.total_episodes = data.seasons.reduce(
+        (sum: number, s: any) => sum + (s.episode_count || 0),
+        0
+      );
+      
+      data._source = "TMDB (fallback)";
     }
 
     return data;
@@ -377,12 +377,12 @@ export const fetchGenres = async (type: 'movie' | 'tv') => {
   }
 };
 
-// 📺 Season details with AniList episode numbering for anime
+// 📺 Season details with hybrid AniList+TMDB support
 export const fetchSeasonDetails = async (id: string, seasonNumber: number) => {
   try {
     if (seasonNumber === 0) return null;
     
-    console.log(`[Debug] Fetching season ${seasonNumber} for content ID: ${id}`);
+    console.log(`[Season Details] Fetching season ${seasonNumber} for content ID: ${id}`);
     
     // Get TMDB show details to check if it's anime
     const showResponse = await fetch(
@@ -390,18 +390,42 @@ export const fetchSeasonDetails = async (id: string, seasonNumber: number) => {
     );
     const showData = await showResponse.json();
     
-    console.log(`[Debug] Show data:`, {
+    console.log(`[Season Details] Show data:`, {
       name: showData.name,
       origin_country: showData.origin_country,
       genres: showData.genres?.map((g: any) => g.name),
       isAnime: isAnimeContent(showData)
     });
     
-    // Check if this is anime content
+    // Check if this is anime content and if we have mapped data available
     if (isAnimeContent(showData)) {
-      console.log(`[AniList] Detected anime: ${showData.name}, fetching episode data for season ${seasonNumber}`);
+      console.log(`[Season Details] Anime detected: ${showData.name}`);
       
-      // Search for the anime on AniList to get correct episode count
+      // Try to get the enhanced content details (which should have the mapped seasons)
+      try {
+        const enhancedData = await fetchContentDetails(id, 'tv');
+        
+        if (enhancedData && enhancedData._source === "AniList+TMDB" && enhancedData.seasons) {
+          console.log(`[Season Details] Using AniList+TMDB mapped data`);
+          
+          // Find the requested season from the mapped data
+          const season = enhancedData.seasons.find((s: any) => s.season_number === seasonNumber);
+          
+          if (season) {
+            console.log(`[Season Details] Found mapped season ${seasonNumber} with ${season.episodes.length} episodes`);
+            return season;
+          } else {
+            console.log(`[Season Details] Season ${seasonNumber} not found in mapped data`);
+            return { episodes: [] };
+          }
+        }
+        
+        console.log(`[Season Details] Enhanced data not available, falling back to legacy anime logic`);
+      } catch (error) {
+        console.error('[Season Details] Error getting enhanced data:', error);
+      }
+      
+      // Fallback to legacy anime logic if mapping fails
       const aniListData = await searchAniListAnime(showData.name || showData.original_name);
       
       // Get all episodes from TMDB - check multiple seasons for anime
@@ -420,7 +444,7 @@ export const fetchSeasonDetails = async (id: string, seasonNumber: number) => {
             if (seasonData.episodes && seasonData.episodes.length > 0) {
               allEpisodes = [...allEpisodes, ...seasonData.episodes];
               totalTmdbEpisodes += seasonData.episodes.length;
-              console.log(`[Debug] TMDB Season ${tmdbSeason}: ${seasonData.episodes.length} episodes`);
+              console.log(`[Season Details] TMDB Season ${tmdbSeason}: ${seasonData.episodes.length} episodes`);
             } else {
               break; // No more seasons
             }
@@ -429,7 +453,7 @@ export const fetchSeasonDetails = async (id: string, seasonNumber: number) => {
           }
         }
         
-        console.log(`[Debug] Total TMDB episodes across all seasons: ${totalTmdbEpisodes}`);
+        console.log(`[Season Details] Total TMDB episodes across all seasons: ${totalTmdbEpisodes}`);
         
         if (allEpisodes.length > 0) {
           // Use the larger episode count (TMDB vs AniList)
@@ -441,7 +465,7 @@ export const fetchSeasonDetails = async (id: string, seasonNumber: number) => {
             episodeSource = 'AniList';
           }
           
-          console.log(`[Debug] Using ${episodeSource} episode count: ${totalEpisodes}`);
+          console.log(`[Season Details] Using ${episodeSource} episode count: ${totalEpisodes}`);
           
           // Calculate episodes per season based on actual episode count
           let episodesPerSeason;
@@ -465,7 +489,7 @@ export const fetchSeasonDetails = async (id: string, seasonNumber: number) => {
             totalSeasons = Math.ceil(totalEpisodes / 12);
           }
           
-          console.log(`[Debug] Smart episode distribution:`, {
+          console.log(`[Season Details] Smart episode distribution:`, {
             totalEpisodes,
             totalSeasons,
             episodesPerSeason,
@@ -480,7 +504,7 @@ export const fetchSeasonDetails = async (id: string, seasonNumber: number) => {
             // Get episodes for this season
             const seasonEpisodes = allEpisodes.slice(seasonStartIndex, seasonEndIndex);
             
-            console.log(`[Debug] Season ${seasonNumber} episodes:`, {
+            console.log(`[Season Details] Season ${seasonNumber} episodes:`, {
               startIndex: seasonStartIndex,
               endIndex: seasonEndIndex,
               episodeCount: seasonEpisodes.length
@@ -495,7 +519,7 @@ export const fetchSeasonDetails = async (id: string, seasonNumber: number) => {
                 original_episode_number: episode.episode_number // Keep original for reference
               }));
               
-              console.log(`[Debug] Generated ${episodes.length} episodes for season ${seasonNumber}`);
+              console.log(`[Season Details] Generated ${episodes.length} episodes for season ${seasonNumber}`);
               
               return {
                 id: `season-${seasonNumber}`,
@@ -506,19 +530,19 @@ export const fetchSeasonDetails = async (id: string, seasonNumber: number) => {
               };
             }
           } else {
-            console.log(`[Debug] Season ${seasonNumber} does not exist (only ${totalSeasons} seasons)`);
+            console.log(`[Season Details] Season ${seasonNumber} does not exist (only ${totalSeasons} seasons)`);
             return { episodes: [] };
           }
         }
       } catch (error) {
-        console.error(`[Debug] Error fetching TMDB season 1:`, error);
+        console.error(`[Season Details] Error fetching TMDB seasons:`, error);
       }
     } else {
-      console.log(`[Debug] Not anime content, using regular TMDB fetch`);
+      console.log(`[Season Details] Not anime content, using regular TMDB fetch`);
     }
     
     // For non-anime content or if anime logic fails, get regular TMDB season data
-    console.log(`[Debug] Falling back to regular TMDB season ${seasonNumber}`);
+    console.log(`[Season Details] Falling back to regular TMDB season ${seasonNumber}`);
     const response = await fetch(
       `${TMDB_BASE_URL}/tv/${id}/season/${seasonNumber}?api_key=${TMDB_API_KEY}&language=en-US`
     );
