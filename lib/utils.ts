@@ -401,55 +401,112 @@ export const fetchSeasonDetails = async (id: string, seasonNumber: number) => {
     if (isAnimeContent(showData)) {
       console.log(`[AniList] Detected anime: ${showData.name}, fetching episode data for season ${seasonNumber}`);
       
-      // Get all episodes from TMDB Season 1 (where anime episodes usually are)
+      // Search for the anime on AniList to get correct episode count
+      const aniListData = await searchAniListAnime(showData.name || showData.original_name);
+      
+      // Get all episodes from TMDB - check multiple seasons for anime
       try {
-        const seasonResponse = await fetch(
-          `${TMDB_BASE_URL}/tv/${id}/season/1?api_key=${TMDB_API_KEY}&language=en-US`
-        );
-        const seasonData = await seasonResponse.json();
+        let allEpisodes: any[] = [];
+        let totalTmdbEpisodes = 0;
         
-        console.log(`[Debug] TMDB Season 1 data:`, {
-          episodes: seasonData.episodes?.length || 0,
-          season_number: seasonData.season_number
-        });
+        // Try to get episodes from multiple TMDB seasons
+        for (let tmdbSeason = 1; tmdbSeason <= 3; tmdbSeason++) {
+          try {
+            const seasonResponse = await fetch(
+              `${TMDB_BASE_URL}/tv/${id}/season/${tmdbSeason}?api_key=${TMDB_API_KEY}&language=en-US`
+            );
+            const seasonData = await seasonResponse.json();
+            
+            if (seasonData.episodes && seasonData.episodes.length > 0) {
+              allEpisodes = [...allEpisodes, ...seasonData.episodes];
+              totalTmdbEpisodes += seasonData.episodes.length;
+              console.log(`[Debug] TMDB Season ${tmdbSeason}: ${seasonData.episodes.length} episodes`);
+            } else {
+              break; // No more seasons
+            }
+          } catch (error) {
+            break; // Season doesn't exist
+          }
+        }
         
-        if (seasonData.episodes && seasonData.episodes.length > 0) {
-          const allEpisodes = seasonData.episodes;
+        console.log(`[Debug] Total TMDB episodes across all seasons: ${totalTmdbEpisodes}`);
+        
+        if (allEpisodes.length > 0) {
+          // Use the larger episode count (TMDB vs AniList)
+          let totalEpisodes = totalTmdbEpisodes;
+          let episodeSource = 'TMDB';
           
-          // Simple division - assume 12 episodes per season
-          const episodesPerSeason = 12;
-          const seasonStartIndex = (seasonNumber - 1) * episodesPerSeason;
-          const seasonEndIndex = seasonStartIndex + episodesPerSeason;
+          if (aniListData && aniListData.episodes && aniListData.episodes > totalTmdbEpisodes) {
+            totalEpisodes = aniListData.episodes;
+            episodeSource = 'AniList';
+          }
           
-          // Get episodes for this season
-          const seasonEpisodes = allEpisodes.slice(seasonStartIndex, seasonEndIndex);
+          console.log(`[Debug] Using ${episodeSource} episode count: ${totalEpisodes}`);
           
-          console.log(`[Debug] Season ${seasonNumber} episodes:`, {
-            startIndex: seasonStartIndex,
-            endIndex: seasonEndIndex,
-            episodeCount: seasonEpisodes.length
+          // Calculate episodes per season based on actual episode count
+          let episodesPerSeason;
+          let totalSeasons;
+          
+          if (totalEpisodes <= 12) {
+            // Single season anime
+            episodesPerSeason = totalEpisodes;
+            totalSeasons = 1;
+          } else if (totalEpisodes <= 26) {
+            // 2 season anime (like Dan Da Dan)
+            episodesPerSeason = Math.ceil(totalEpisodes / 2);
+            totalSeasons = 2;
+          } else if (totalEpisodes <= 50) {
+            // Multi-season anime (like Jujutsu Kaisen) - use 24 episodes per season
+            episodesPerSeason = 24;
+            totalSeasons = Math.ceil(totalEpisodes / 24);
+          } else {
+            // Very long anime - use 12-episode seasons
+            episodesPerSeason = 12;
+            totalSeasons = Math.ceil(totalEpisodes / 12);
+          }
+          
+          console.log(`[Debug] Smart episode distribution:`, {
+            totalEpisodes,
+            totalSeasons,
+            episodesPerSeason,
+            source: episodeSource
           });
           
-          if (seasonEpisodes.length > 0) {
-            // Renumber episodes for this season
-            const episodes = seasonEpisodes.map((episode: any, index: number) => ({
-              ...episode,
-              episode_number: index + 1, // Per-season numbering (1, 2, 3...)
-              season_number: seasonNumber,
-              original_episode_number: episode.episode_number // Keep original for reference
-            }));
+          const seasonStartIndex = (seasonNumber - 1) * episodesPerSeason;
+          const seasonEndIndex = Math.min(seasonStartIndex + episodesPerSeason, totalEpisodes);
+          
+          // Only return episodes if this season should exist
+          if (seasonStartIndex < totalEpisodes) {
+            // Get episodes for this season
+            const seasonEpisodes = allEpisodes.slice(seasonStartIndex, seasonEndIndex);
             
-            console.log(`[Debug] Generated ${episodes.length} episodes for season ${seasonNumber}`);
+            console.log(`[Debug] Season ${seasonNumber} episodes:`, {
+              startIndex: seasonStartIndex,
+              endIndex: seasonEndIndex,
+              episodeCount: seasonEpisodes.length
+            });
             
-            return {
-              id: `season-${seasonNumber}`,
-              season_number: seasonNumber,
-              name: `Season ${seasonNumber}`,
-              episodes,
-              _anime_enhanced: true
-            };
+            if (seasonEpisodes.length > 0) {
+              // Renumber episodes for this season
+              const episodes = seasonEpisodes.map((episode: any, index: number) => ({
+                ...episode,
+                episode_number: index + 1, // Per-season numbering (1, 2, 3...)
+                season_number: seasonNumber,
+                original_episode_number: episode.episode_number // Keep original for reference
+              }));
+              
+              console.log(`[Debug] Generated ${episodes.length} episodes for season ${seasonNumber}`);
+              
+              return {
+                id: `season-${seasonNumber}`,
+                season_number: seasonNumber,
+                name: `Season ${seasonNumber}`,
+                episodes,
+                _anime_enhanced: true
+              };
+            }
           } else {
-            console.log(`[Debug] No episodes found for season ${seasonNumber}`);
+            console.log(`[Debug] Season ${seasonNumber} does not exist (only ${totalSeasons} seasons)`);
             return { episodes: [] };
           }
         }
