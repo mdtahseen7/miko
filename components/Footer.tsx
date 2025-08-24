@@ -38,8 +38,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4 max-w-md">
-              Your ultimate destination for movies, TV shows, and live sports streaming. 
-              Discover, watch, and enjoy premium entertainment content.
+              Your ultimate destination for movies, TV shows, anime all at one place. 
             </p>
           </motion.div>
 
@@ -55,8 +54,6 @@ export default function Footer() {
               {[
                 { href: "/", label: "Home" },
                 { href: "/about", label: "About" },
-                { href: "/livesports", label: "Live Sports" },
-                { href: "/watch", label: "Watch" },
                 { href: "/settings", label: "Settings" }
               ].map((link, index) => (
                 <motion.li 
@@ -94,7 +91,7 @@ export default function Footer() {
                 href="https://instagram.com/md_tahseen_7"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 bg-gray-800 hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 rounded-lg transition-all duration-300"
+                className="p-2 bg-gray-800 hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/30"
                 title="Instagram"
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 whileTap={{ scale: 0.9 }}
@@ -109,7 +106,7 @@ export default function Footer() {
                 href="https://github.com/mdtahseen7"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-white/20"
                 title="GitHub"
                 whileHover={{ scale: 1.1, rotate: -5 }}
                 whileTap={{ scale: 0.9 }}
@@ -124,7 +121,7 @@ export default function Footer() {
                 href="https://linkedin.com/in/md-tahseen"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 bg-gray-800 hover:bg-blue-600 rounded-lg transition-colors"
+                className="p-2 bg-gray-800 hover:bg-blue-600 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30"
                 title="LinkedIn"
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 whileTap={{ scale: 0.9 }}
@@ -160,14 +157,16 @@ export default function Footer() {
           transition={{ duration: 0.6, delay: 0.7 }}
           viewport={{ once: true }}
         >
-          <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 mb-6">
-            <p className="text-gray-400 text-sm leading-relaxed">
-              <strong className="text-red-500">Disclaimer:</strong> This website does not host any content on its servers. 
-              All content is provided by third-party sources and is for educational and informational purposes only. 
-              We do not store any files, videos, or media content on our servers. All trademarks, logos, and brand names 
-              are the property of their respective owners. If you believe any content infringes your copyright, 
-              please contact us for immediate removal.
-            </p>
+          <div className="border-l-4 border-red-500/50 pl-4 py-2">
+            <div className="flex items-start space-x-2">
+              <span className="text-red-300 text-sm mt-0.5">⚠️</span>
+              <p className="text-gray-500 text-xs leading-relaxed">
+                <strong className="text-red-500">Disclaimer:</strong> Miko does not host or store any media files on its servers. 
+                All content is sourced from third-party providers and is intended for educational and informational use only. 
+                Trademarks, logos, and brand names belong to their respective owners. 
+                If you believe your copyright is infringed, please contact us for prompt removal.
+              </p>
+            </div>
           </div>
         </motion.div>
 
@@ -179,35 +178,25 @@ export default function Footer() {
           transition={{ duration: 0.6, delay: 0.8 }}
           viewport={{ once: true }}
         >
-          <div className="flex flex-col md:flex-row justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-center items-center text-center space-y-2 sm:space-y-0 sm:space-x-1">
             <p className="text-gray-400 text-xs sm:text-sm">
               © {new Date().getFullYear()} Miko. All rights reserved.
             </p>
-            <motion.div 
-              className="flex space-x-4 sm:space-x-6 mt-3 sm:mt-4 md:mt-0"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.9 }}
-              viewport={{ once: true }}
-            >
+            <span className="hidden sm:inline text-gray-600 text-xs">•</span>
+            <div className="flex items-center space-x-1">
               {[
                 { href: "/privacy", label: "Privacy Policy" },
                 { href: "/terms", label: "Terms of Service" },
                 { href: "/contact", label: "Contact" }
               ].map((link, index) => (
-                <motion.div
-                  key={link.href}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.4, delay: 1.0 + index * 0.1 }}
-                  viewport={{ once: true }}
-                >
+                <React.Fragment key={link.href}>
                   <Link href={link.href} className="text-gray-400 hover:text-[#cd2be2] text-xs sm:text-sm transition-colors">
                     {link.label}
                   </Link>
-                </motion.div>
+                  {index < 2 && <span className="text-gray-600 text-xs">•</span>}
+                </React.Fragment>
               ))}
-            </motion.div>
+            </div>
           </div>
         </motion.div>
       </div>

@@ -72,7 +72,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
         setCurrentMovieIndex((prev) => (prev + 1) % featuredMovies.length);
         setIsTransitioning(false);
       }, 150);
-    }, 4000); // Change every 4 seconds
+    }, 5000); // Change every 5 seconds
 
     return () => clearInterval(interval);
   }, [featuredMovies.length, isPaused]);
@@ -179,7 +179,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
       onMouseLeave={() => setIsPaused(false)}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.8 }}
+      transition={{ duration: 0.1 }}
     >
       {/* Background Image */}
       <div className="absolute inset-0">
@@ -242,7 +242,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -50 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.2 }}
             >
               <motion.h1 
                 className="text-2xl sm:text-3xl md:text-5xl lg:text-5xl font-bold text-white mb-2 sm:mb-3 md:mb-4 leading-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"

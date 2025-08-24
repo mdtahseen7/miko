@@ -202,11 +202,12 @@ export default function ContentSection({
       >
         <div className="overflow-x-auto scrollbar-hide pb-4">
           <motion.div 
-            className="flex space-x-4 w-max"
+            className="flex space-x-4"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
             viewport={{ once: true }}
+            style={{ width: 'max-content' }}
           >
             {content.slice(0, 10).map((item, index) => (
               <motion.div 

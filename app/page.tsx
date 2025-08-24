@@ -23,7 +23,6 @@ import type { ContentItem } from '@/lib/types';
 import HeroSection from '@/components/HeroSection';
 import Navbar from '@/components/Navbar';
 import ContentSection from '@/components/ContentSection';
-import StreamingPlatforms from '@/components/StreamingPlatforms';
 import Footer from '@/components/Footer';
 
 export default function HomePage() {
@@ -428,8 +427,8 @@ export default function HomePage() {
         className="group relative bg-gray-900 rounded-xl overflow-hidden card-hover"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
+        transition={{ duration: 0.15 }}
+        whileHover={{ scale: 1.05, transition: { duration: 0.1 } }}
         whileTap={{ scale: 0.95 }}
       >
         <div className="relative aspect-[5/7]">
@@ -438,7 +437,7 @@ export default function HomePage() {
               src={item.poster ? posterPath : `${TMDB_IMAGE_BASE_URL}${posterPath}`}
               alt={title}
               fill
-              className="object-cover transition-all duration-300"
+              className="object-cover transition-all duration-150"
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             />
           ) : (
@@ -453,7 +452,7 @@ export default function HomePage() {
               e.preventDefault();
               addToWatchLater(item);
             }}
-            className="absolute top-3 right-3 z-10 bg-black/60 backdrop-blur-sm rounded-full p-2 transition-all duration-200 hover:bg-black/80"
+            className="absolute top-3 right-3 z-10 bg-black/60 backdrop-blur-sm rounded-full p-2 transition-all duration-100 hover:bg-black/80"
           >
             <svg 
               className={`w-5 h-5 transition-colors ${
@@ -510,10 +509,10 @@ export default function HomePage() {
 
   return (
     <motion.div 
-      className="min-h-screen bg-black text-white"
+      className="min-h-screen bg-black text-white overflow-x-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.2 }}
     >
       {/* Navigation */}
       <Navbar
@@ -673,14 +672,14 @@ export default function HomePage() {
                 className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, staggerChildren: 0.1 }}
+                transition={{ duration: 0.2, staggerChildren: 0.05 }}
               >
                 {getFilteredContent().map((item, index) => (
                   <motion.div
                     key={`${item.id}-${item.type || item.media_type || 'unknown'}`}
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    transition={{ duration: 0.2, delay: index * 0.05 }}
                   >
                     <ContentCard item={item} />
                   </motion.div>
@@ -722,7 +721,6 @@ export default function HomePage() {
           )}
         </div>
       </main>
-      <StreamingPlatforms />
       <Footer />
     </motion.div>
   );

@@ -51,14 +51,14 @@ export default function Navbar({
 
   return (
     <motion.header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-150 ease-out ${
         (isScrolled || showSearch)
           ? 'miko-navbar-glass'
           : 'miko-navbar-top'
       }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.2 }}
     >
       <div className="w-full px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
@@ -105,12 +105,12 @@ export default function Navbar({
                     key={view}
                     onClick={() => handleViewChange(view)}
                     aria-current={active ? 'page' : undefined}
-                    className={`relative px-0 py-0 text-sm font-medium tracking-wide transition-all duration-300 group focus:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-400/60 rounded-sm ${
+                    className={`relative px-0 py-0 text-sm font-medium tracking-wide transition-all duration-150 group focus:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-400/60 rounded-sm ${
                       active ? '' : 'text-white/80 hover:text-white'
                     }`}
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    transition={{ duration: 0.2, delay: index * 0.05 }}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -121,7 +121,7 @@ export default function Navbar({
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: active ? 1 : 0 }}
                         whileHover={{ scaleX: 1 }}
-                        transition={{ duration: 0.3 }}
+                        transition={{ duration: 0.15 }}
                       />
                     </span>
                   </motion.button>
@@ -141,7 +141,7 @@ export default function Navbar({
             
             <Link
               href="/search"
-              className="p-2 hover:bg-white/10 rounded-full transition-all duration-200 group"
+              className="p-2 hover:bg-white/10 rounded-full transition-all duration-100 group"
               title="Search"
               style={{ filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8))' }}
             >
@@ -152,7 +152,7 @@ export default function Navbar({
 
             <Link
               href="/settings"
-              className="p-2 hover:bg-white/10 rounded-full transition-all duration-200 group"
+              className="p-2 hover:bg-white/10 rounded-full transition-all duration-100 group"
               title="Settings"
               style={{ filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8))' }}
             >
@@ -181,7 +181,7 @@ export default function Navbar({
                   afterSignOutUrl="/"
                   appearance={{
                     elements: {
-                      avatarBox: "w-8 h-8 rounded-full hover:ring-2 hover:ring-white/30 transition-all duration-200"
+                      avatarBox: "w-8 h-8 rounded-full hover:ring-2 hover:ring-white/30 transition-all duration-100"
                     }
                   }}
                 />
@@ -189,13 +189,13 @@ export default function Navbar({
             ) : (
               <div className="relative group">
                 <SignUpButton mode="modal">
-                  <button className="px-4 py-1.5 rounded-sm text-white text-sm font-semibold tracking-wide transition-all duration-300 bg-gradient-to-r from-fuchsia-500 via-purple-600 to-fuchsia-600 hover:from-fuchsia-400 hover:via-purple-500 hover:to-fuchsia-500 shadow-md shadow-fuchsia-900/40 hover:shadow-fuchsia-700/60 focus:outline-none focus:ring-2 focus:ring-fuchsia-400/60">
+                  <button className="px-4 py-1.5 rounded-sm text-white text-sm font-semibold tracking-wide transition-all duration-150 bg-gradient-to-r from-fuchsia-500 via-purple-600 to-fuchsia-600 hover:from-fuchsia-400 hover:via-purple-500 hover:to-fuchsia-500 shadow-md shadow-fuchsia-900/40 hover:shadow-fuchsia-700/60 focus:outline-none focus:ring-2 focus:ring-fuchsia-400/60">
                     Sign Up
                   </button>
                 </SignUpButton>
                 
                 {/* Hidden Sign In Option */}
-                <div className="absolute right-0 mt-2 w-28 bg-black/95 backdrop-blur-lg border border-white/10 rounded-md shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div className="absolute right-0 mt-2 w-28 bg-black/95 backdrop-blur-lg border border-white/10 rounded-md shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-100 z-50">
                   <div className="py-1">
                     <SignInButton mode="modal">
                       <button className="block px-3 py-2 text-sm text-gray-200 hover:bg-white/10 hover:text-white transition-colors w-full text-left">

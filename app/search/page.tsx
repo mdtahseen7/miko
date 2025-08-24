@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,6 +9,7 @@ import { searchContent, TMDB_IMAGE_BASE_URL, filterAdultContent, blockedMovieIds
 import type { ContentItem } from '@/lib/types';
 
 export default function SearchPage() {
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -171,13 +173,21 @@ export default function SearchPage() {
   <div className="min-h-screen text-white">
       <Navbar
         currentView="search"
-        showSearch={false}
+        showSearch={true}
         searchQuery={query}
         watchLaterCount={watchLaterCount}
         isScrolled={isScrolled}
-        onViewChange={()=>{}}
-        onSearchToggle={()=>{}}
-        onSearchChange={()=>{}}
+        onViewChange={(view) => {
+          if (view === 'home') {
+            router.push('/');
+          } else if (view === 'livesports') {
+            window.location.href = '/livesports';
+          } else {
+            router.push(`/?view=${view}`);
+          }
+        }}
+        onSearchToggle={() => {}}
+        onSearchChange={setQuery}
       />
 
       <main className="pt-28 pb-20 px-4 max-w-6xl mx-auto w-full">
