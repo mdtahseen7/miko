@@ -412,7 +412,9 @@ function WatchPageContent() {
             </motion.div>
           )}
         </AnimatePresence>
-
+          <p className="text-white-500 text-sm leading-relaxed">
+            If the current source doesn’t work or has CAMRip/Low Quality, try switching to another source.
+          </p>
         {/* Recommendations */}
         {recommendations.length > 0 && (
           <motion.div

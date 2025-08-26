@@ -146,7 +146,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
 
   if (loading) {
     return (
-      <div className="relative h-[calc(100vh-80px)] bg-gray-900 animate-pulse">
+      <div className="relative h-[calc(100dvh-80px)] bg-gray-900 animate-pulse">
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent z-10" />
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent z-10" />
         <div className="relative z-20 container mx-auto px-6 h-full flex items-center">
@@ -174,7 +174,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
 
   return (
     <motion.div 
-      className="relative h-[85vh] sm:h-[90vh] lg:h-[92vh] bg-black overflow-hidden mb-8 sm:mb-10 lg:mb-16"
+      className="relative min-h-[85dvh] sm:min-h-[90dvh] lg:min-h-[92dvh] bg-black overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       initial={{ opacity: 0 }}

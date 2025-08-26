@@ -1,0 +1,49 @@
+{
+  "name": "Miko Next",
+  "short_name": "Miko",
+  "description": "Miko Next - Streaming Platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0013",
+  "theme_color": "#8A2BE2",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/mobile.png",
+      "sizes": "450x807",
+      "type": "image/png"
+    },
+    {
+      "src": "/screenshots/desktop.png",
+      "sizes": "1911x925",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
+}
