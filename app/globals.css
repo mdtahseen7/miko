@@ -305,10 +305,8 @@ body::-webkit-scrollbar {
   z-index: 2;
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
+/* Smooth scrolling removed to prevent scroll jank during programmatic scrolls */
+/* html { scroll-behavior: smooth; } */
 
 /* Block common ad elements */
 iframe[src*="ads"], 
@@ -378,10 +376,13 @@ iframe[src*="popup"],
 }
 
 .miko-bg::before {
-  /* Lightweight radial glow layer (single pseudo-element vs multiple layers) */
+  /* Keep the glow fixed so it doesn't resize or move on scroll */
   content: '';
   position: fixed;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background:
     radial-gradient(circle at 55% 35%, rgba(160,50,255,0.18), rgba(60,0,110,0) 55%),
     radial-gradient(circle at 80% 75%, rgba(190,60,255,0.12), rgba(50,0,90,0) 65%);

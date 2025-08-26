@@ -42,9 +42,9 @@ export default function ContentSection({
           transition: { duration: 0.2, ease: "easeOut" }
         }}
         whileTap={{ scale: 0.98 }}
-        initial={{ opacity: 0, y: 50 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.3 }}
         style={{ willChange: "transform" }}
       >
         <div className="relative aspect-[2/3]">
@@ -131,35 +131,31 @@ export default function ContentSection({
   return (
     <motion.section 
       className="mb-8 sm:mb-10 md:mb-12"
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      viewport={{ once: true }}
+      initial={false}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
     >
       <motion.div 
         className="flex items-center justify-between mb-4 sm:mb-5 md:mb-6"
-        initial={{ opacity: 0, x: -50 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        viewport={{ once: true }}
+        initial={false}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3 }}
       >
         <div>
           <motion.h2 
             className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white mb-1"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            viewport={{ once: true }}
+            initial={false}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
           >
             {title}
           </motion.h2>
           {subtitle && (
             <motion.p 
               className="text-gray-400 text-xs sm:text-sm md:text-base"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              viewport={{ once: true }}
+              initial={false}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
             >
               {subtitle}
             </motion.p>
@@ -169,10 +165,9 @@ export default function ContentSection({
           <motion.button 
             onClick={onViewAll}
             className="text-red-500 hover:text-red-400 transition-colors text-xs sm:text-sm font-medium flex items-center group"
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            viewport={{ once: true }}
+            initial={false}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.2 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -195,32 +190,25 @@ export default function ContentSection({
       {/* Horizontal scrolling container */}
       <motion.div 
         className="relative"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
-        viewport={{ once: true }}
+        initial={false}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
       >
         <div className="overflow-x-auto scrollbar-hide pb-4">
           <motion.div 
             className="flex space-x-4"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            viewport={{ once: true }}
+            initial={false}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
             style={{ width: 'max-content' }}
           >
             {content.slice(0, 10).map((item, index) => (
               <motion.div 
                 key={`${sectionId}-${item.id}-${index}`} 
                 className="w-32 sm:w-36 md:w-40 lg:w-48 flex-shrink-0"
-                initial={{ opacity: 0, x: 30, scale: 0.9 }}
-                whileInView={{ opacity: 1, x: 0, scale: 1 }}
-                transition={{ 
-                  duration: 0.4, 
-                  delay: 0.3 + index * 0.05,
-                  ease: "easeOut"
-                }}
-                viewport={{ once: true, margin: "-50px" }}
+                initial={false}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                transition={{ duration: 0.2 }}
               >
                 <ContentCard item={item} />
               </motion.div>

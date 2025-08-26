@@ -26,6 +26,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [watchLater, setWatchLater] = useState<any[]>([]);
+  const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
 
   // Load watch later list once
   useEffect(() => {
@@ -50,6 +51,8 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
           
           if (validMovies.length > 0) {
             setFeaturedMovies(validMovies);
+            // Set initial load flag after content is ready
+            setTimeout(() => setHasInitiallyLoaded(true), 100);
           }
         }
       } catch (error) {
@@ -72,7 +75,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
         setCurrentMovieIndex((prev) => (prev + 1) % featuredMovies.length);
         setIsTransitioning(false);
       }, 150);
-    }, 5000); // Change every 5 seconds
+    }, 7000); // Change every 7 seconds
 
     return () => clearInterval(interval);
   }, [featuredMovies.length, isPaused]);
@@ -146,7 +149,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
 
   if (loading) {
     return (
-      <div className="relative h-[calc(100dvh-80px)] bg-gray-900 animate-pulse">
+      <div className="relative h-screen bg-gray-900 animate-pulse">
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent z-10" />
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent z-10" />
         <div className="relative z-20 container mx-auto px-6 h-full flex items-center">
@@ -174,12 +177,12 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
 
   return (
     <motion.div 
-      className="relative min-h-[85dvh] sm:min-h-[90dvh] lg:min-h-[92dvh] bg-black overflow-hidden"
+      className="relative h-screen bg-black"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.1 }}
+      transition={{ duration: 0.8 }}
     >
       {/* Background Image */}
       <div className="absolute inset-0">
@@ -188,7 +191,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
             src={`https://image.tmdb.org/t/p/original${currentMovie.backdrop_path}`}
             alt={currentMovie.title}
             fill
-            className="object-cover object-center"
+            className="object-cover object-center h-full w-full"
             priority
             sizes="100vw"
           />
@@ -242,13 +245,13 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -50 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.3 }}
             >
               <motion.h1 
                 className="text-2xl sm:text-3xl md:text-5xl lg:text-5xl font-bold text-white mb-2 sm:mb-3 md:mb-4 leading-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
               >
                 {currentMovie.title}
               </motion.h1>
@@ -256,7 +259,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
                 className="flex flex-wrap items-center gap-2 sm:gap-3 md:gap-5 text-xs sm:text-sm text-gray-200 font-medium mb-3 sm:mb-4 md:mb-6"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
               >
               <span>{formatReleaseYear(currentMovie.release_date)}</span>
               {getCertification(currentMovie) && (
@@ -271,7 +274,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
                 className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed mb-3 sm:mb-4 md:mb-6 max-w-lg"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
               >
                 {truncateOverview(currentMovie.overview, 120)}
               </motion.p>
@@ -279,7 +282,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
                 className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6 md:mb-10"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.8 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
               >
                 <motion.button
                   onClick={handleWatchNow}
@@ -310,7 +313,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
                   className="flex items-center gap-3 sm:gap-4 group text-white/90 hover:text-white tracking-wider"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 1.0 }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -332,9 +335,9 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
                 onClick={() => goToSlide(currentMovieIndex === 0 ? featuredMovies.length - 1 : currentMovieIndex - 1)}
                 className="hidden lg:flex absolute left-4 top-1/2 -translate-y-1/2 items-center justify-center w-12 h-12 bg-black/60 hover:bg-black/80 text-white rounded-full shadow-lg transition duration-300 hover:scale-110 backdrop-blur-md z-30"
                 aria-label="Previous movie"
-                initial={{ opacity: 0, x: -50 }}
+                initial={hasInitiallyLoaded ? false : { opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 1.2 }}
+                transition={{ duration: hasInitiallyLoaded ? 0.3 : 0.6, delay: hasInitiallyLoaded ? 0 : 1.2 }}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 >
@@ -353,9 +356,9 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
                 onClick={() => goToSlide(currentMovieIndex === featuredMovies.length - 1 ? 0 : currentMovieIndex + 1)}
                 className="hidden lg:flex absolute right-4 top-1/2 -translate-y-1/2 items-center justify-center w-12 h-12 bg-black/60 hover:bg-black/80 text-white rounded-full shadow-lg transition duration-300 hover:scale-110 backdrop-blur-md z-30"
                 aria-label="Next movie"
-                initial={{ opacity: 0, x: 50 }}
+                initial={hasInitiallyLoaded ? false : { opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 1.2 }}
+                transition={{ duration: hasInitiallyLoaded ? 0.3 : 0.6, delay: hasInitiallyLoaded ? 0 : 1.2 }}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 >

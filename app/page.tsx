@@ -71,27 +71,10 @@ export default function HomePage() {
     loadContent();
     loadWatchLater();
     
-    // Add scroll listener for header effect with debouncing
-    let scrollTimeout: NodeJS.Timeout;
-    const handleScroll = () => {
-      // Clear previous timeout
-      if (scrollTimeout) {
-        clearTimeout(scrollTimeout);
-      }
-      
-      // Debounce scroll updates to prevent performance issues
-      scrollTimeout = setTimeout(() => {
-        setIsScrolled(window.scrollY > 50);
-      }, 10); // Small delay to batch scroll events
-    };
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (scrollTimeout) {
-        clearTimeout(scrollTimeout);
-      }
-    };
+  // Add simple scroll listener for header effect
+  const handleScroll = () => setIsScrolled(window.scrollY > 50);
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
@@ -103,24 +86,13 @@ export default function HomePage() {
   // Effect to restore scroll position after loading more content
   useEffect(() => {
     if (isLoadingMoreRef.current && !loading && savedScrollPositionRef.current > 0) {
-      // Use requestAnimationFrame to ensure DOM has been updated
       requestAnimationFrame(() => {
-        // Temporarily disable smooth scrolling for position restoration
-        const originalBehavior = document.documentElement.style.scrollBehavior;
-        document.documentElement.style.scrollBehavior = 'auto';
-        
         window.scrollTo(0, savedScrollPositionRef.current);
-        
-        // Restore smooth scrolling after a brief delay
-        setTimeout(() => {
-          document.documentElement.style.scrollBehavior = originalBehavior;
-        }, 50);
-        
         isLoadingMoreRef.current = false;
         savedScrollPositionRef.current = 0;
       });
     }
-  }, [loading]); // Simplified dependencies - only depend on loading state
+  }, [loading]);
 
   const loadContent = async () => {
     setLoading(true);
