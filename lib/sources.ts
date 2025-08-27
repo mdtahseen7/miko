@@ -19,6 +19,15 @@ export const availableSources = [
             tv: 'https://moviesapi.club/tv/{id}-{season}-{episode}'
         }
     },
+        {
+        id: 'rive',
+        name: 'RiveStream',
+        isFrench: false,
+        urls: {
+            movie: 'https://rivestream.org/embed?type=movie&id={id}',
+            tv: 'https://rivestream.org/embed?type=tv&id={id}&season={season}&episode={episode}'
+        }
+    },
     {
         id: 'pstream',
         name: 'P-Stream',
@@ -34,7 +43,7 @@ export const availableSources = [
         id: 'embedsu',
         name: 'EmbedSU',
         isFrench: false,
-        requiresNoSandbox: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://embed.su/embed/movie/{id}',
             tv: 'https://embed.su/embed/tv/{id}/{season}/{episode}'
@@ -53,6 +62,7 @@ export const availableSources = [
         id: 'vidlink',
         name: 'VidLink',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://vidlink.pro/movie/{id}',
             tv: 'https://vidlink.pro/tv/{id}/{season}/{episode}'
@@ -62,6 +72,7 @@ export const availableSources = [
         id: 'vidsrcXyz',
         name: 'VidSrcXyz',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://vidsrc.xyz/embed/movie/{id}',
             tv: 'https://vidsrc.xyz/embed/tv/{id}/{season}/{episode}'
@@ -71,6 +82,7 @@ export const availableSources = [
         id: 'vidsrcrip',
         name: 'VidSrcRIP',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://vidsrc.rip/embed/movie/{id}',
             tv: 'https://vidsrc.rip/embed/tv/{id}/{season}/{episode}'
@@ -80,6 +92,7 @@ export const availableSources = [
         id: 'vidsrcsu',
         name: 'VidSrcSU',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://vidsrc.su/embed/movie/{id}',
             tv: 'https://vidsrc.su/embed/tv/{id}/{season}/{episode}'
@@ -89,6 +102,7 @@ export const availableSources = [
         id: 'vidsrcvip',
         name: 'VidSrcVIP',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://vidsrc.vip/embed/movie/{id}',
             tv: 'https://vidsrc.vip/embed/tv/{id}/{season}/{episode}'
@@ -98,6 +112,7 @@ export const availableSources = [
         id: '2embed',
         name: '2Embed',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://www.2embed.cc/embed/{id}',
             tv: 'https://www.2embed.cc/embedtv/{id}&s={season}&e={episode}'
@@ -107,6 +122,7 @@ export const availableSources = [
         id: '123embed',
         name: '123Embed',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://play2.123embed.net/movie/{id}',
             tv: 'https://play2.123embed.net/tv/{id}/{season}/{episode}'
@@ -116,6 +132,7 @@ export const availableSources = [
         id: '111movies',
         name: '111Movies',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://111movies.com/movie/{id}',
             tv: 'https://111movies.com/tv/{id}/{season}/{episode}'
@@ -125,6 +142,7 @@ export const availableSources = [
         id: 'smashystream',
         name: 'SmashyStream',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://player.smashy.stream/movie/{id}',
             tv: 'https://player.smashy.stream/tv/{id}?s={season}&e={episode}'
@@ -134,6 +152,7 @@ export const availableSources = [
         id: 'autoembed',
         name: 'AutoEmbed',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://player.autoembed.cc/embed/movie/{id}',
             tv: 'https://player.autoembed.cc/embed/tv/{id}/{season}/{episode}'
@@ -143,6 +162,7 @@ export const availableSources = [
         id: 'videasy',
         name: 'VidEasy (4K)',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://player.videasy.net/movie/{id}?color=8834ec',
             tv: 'https://player.videasy.net/tv/{id}/{season}/{episode}?color=8834ec'
@@ -152,6 +172,7 @@ export const availableSources = [
         id: 'vidfast',
         name: 'VidFast (4K)',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://vidfast.pro/movie/{id}',
             tv: 'https://vidfast.pro/tv/{id}/{season}/{episode}'
@@ -161,6 +182,7 @@ export const availableSources = [
         id: 'vidify',
         name: 'Vidify',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://vidify.top/embed/movie/{id}',
             tv: 'https://vidify.top/embed/tv/{id}/{season}/{episode}'
@@ -170,24 +192,17 @@ export const availableSources = [
         id: 'flicky',
         name: 'Flicky',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
-            movie: 'https://flicky.host/embed/movie/?id={id}',
-            tv: 'https://flicky.host/embed/tv/{id}/{season}/{episode}'
-        }
-    },
-    {
-        id: 'rive',
-        name: 'RiveStream',
-        isFrench: false,
-        urls: {
-            movie: 'https://rivestream.org/embed?type=movie&id={id}',
-            tv: 'https://rivestream.org/embed?type=tv&id={id}&season={season}&episode={episode}'
+            movie: 'https://letsembed.cc/embed/movie/?id={id}',
+            tv: 'https://letsembed.cc/embed/tv/?id={id}/{season}/{episode}'
         }
     },
     {
         id: 'vidora',
         name: 'Vidora',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://vidora.su/movie/{id}',
             tv: 'https://vidora.su/tv/{id}/{season}/{episode}'
@@ -197,6 +212,7 @@ export const availableSources = [
         id: 'vidsrccc',
         name: 'VidSrcCC',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://vidsrc.cc/v2/embed/movie/{id}?autoPlay=false',
             tv: 'https://vidsrc.cc/v2/embed/tv/{id}/{season}/{episode}?autoPlay=false'
@@ -224,6 +240,7 @@ export const availableSources = [
         id: 'vidjoy',
         name: 'VidJoy',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://vidjoy.pro/embed/movie/{id}',
             tv: 'https://vidjoy.pro/embed/tv/{id}}/{season}/{episode}'
@@ -233,6 +250,7 @@ export const availableSources = [
         id: 'vidzee',
         name: 'VidZee',
         isFrench: false,
+        requiresNoSandbox: true,
         urls: {
             movie: 'https://player.vidzee.wtf/embed/movie/{id}',
             tv: 'https://player.vidzee.wtf/embed/tv/{id}/{season}/{episode}'

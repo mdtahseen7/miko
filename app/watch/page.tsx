@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -37,6 +37,13 @@ function WatchPageContent() {
 
   const contentId = searchParams.get('id');
   const contentType = searchParams.get('type') as 'movie' | 'tv';
+  const seasonParamStr = searchParams.get('season');
+  const episodeParamStr = searchParams.get('episode');
+  const seasonFromQuery = seasonParamStr ? parseInt(seasonParamStr, 10) : undefined;
+  const episodeFromQuery = episodeParamStr ? parseInt(episodeParamStr, 10) : undefined;
+
+  // Ensure we only initialize episode from query once
+  const initFromQueryRef = useRef(false);
 
   useEffect(() => {
     if (contentId && contentType) loadContent();
@@ -69,8 +76,17 @@ function WatchPageContent() {
       setRecommendations(recData.results || []);
 
       if (contentType === 'tv' && data?.seasons) {
-        const firstSeason = data.seasons.find((s: Season) => s.season_number > 0);
-        if (firstSeason) setSelectedSeason(firstSeason.season_number);
+        // Prefer season from query if valid; else first available season > 0
+        let targetSeason: number | undefined = undefined;
+        if (typeof seasonFromQuery === 'number' && !Number.isNaN(seasonFromQuery)) {
+          const exists = data.seasons.some((s: Season) => s.season_number === seasonFromQuery);
+          if (exists) targetSeason = seasonFromQuery;
+        }
+        if (targetSeason === undefined) {
+          const firstSeason = data.seasons.find((s: Season) => s.season_number > 0);
+          if (firstSeason) targetSeason = firstSeason.season_number;
+        }
+        if (targetSeason !== undefined) setSelectedSeason(targetSeason);
       }
     } catch (err) {
       console.error(err);
@@ -84,7 +100,28 @@ function WatchPageContent() {
     try {
       const data = await fetchSeasonDetails(contentId, selectedSeason);
       setSeasonData(data);
-      setSelectedEpisode(1);
+      
+      // Initialize selected episode from query if we're on the correct season; else default to 1
+      let nextEpisode = 1;
+      
+      // Check if current season matches the season from query and we have episode from query
+      if (typeof seasonFromQuery === 'number' && 
+          typeof episodeFromQuery === 'number' && 
+          selectedSeason === seasonFromQuery && 
+          !Number.isNaN(episodeFromQuery)) {
+        const valid = data.episodes?.some((e: any) => e.episode_number === episodeFromQuery);
+        nextEpisode = valid ? episodeFromQuery : 1;
+      } else if (!initFromQueryRef.current) {
+        // First time loading, but no valid query params
+        nextEpisode = 1;
+        initFromQueryRef.current = true;
+      } else {
+        // Season changed, check if current episode exists in new season
+        const stillValid = data.episodes?.some((e: any) => e.episode_number === selectedEpisode);
+        nextEpisode = stillValid ? selectedEpisode : 1;
+      }
+      
+      setSelectedEpisode(nextEpisode);
     } catch (err) { console.error(err); }
   };
 
@@ -311,7 +348,7 @@ function WatchPageContent() {
                           >
                             {source.name}
                             {source.requiresNoSandbox && (
-                              <span className="ml-1 text-orange-400" title="May show ads">⚠️</span>
+                              <span className="ml-1 text-orange-400" title="May show ads"></span>
                             )}
                           </button>
                         ))}
@@ -322,49 +359,55 @@ function WatchPageContent() {
             </AnimatePresence>
           </motion.div>
         </motion.div>
-
-        {/* Episodes (if TV) */}
+              <p className="text-white-500 text-sm leading-relaxed">
+                If the current source doesn’t work or has CAMRip/Low Quality, try switching to another source.
+              </p>
+        {/* Episodes (if TV) - Screenshot Style */}
         <AnimatePresence>
           {contentType === 'tv' && seasonData?.episodes && (
             <motion.div 
-              className="rounded-lg py-4 pt-8"
+              className="py-8"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -50 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              <h3 className="text-lg sm:text-xl font-semibold mb-6">📺 Episodes</h3>
+              <h3 className="text-2xl font-bold mb-6 text-white px-4">Episodes</h3>
               
-              {/* Season Selector */}
+              {/* Season Selector - Button Style like screenshot */}
               {(content as TVShow).seasons && (content as TVShow).seasons.filter(s => s.season_number > 0).length > 1 && (
-                <div className="mb-6">
-                  <select
-                    value={selectedSeason}
-                    onChange={(e) => setSelectedSeason(parseInt(e.target.value))}
-                    className="px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white text-sm"
-                  >
-                    {(content as TVShow).seasons?.filter(s => s.season_number > 0).map(season => (
-                      <option key={season.id} value={season.season_number}>Season {season.season_number}</option>
-                    ))}
-                  </select>
+                <div className="flex flex-wrap gap-2 mb-6 px-4">
+                  {(content as TVShow).seasons?.filter(s => s.season_number > 0).map(season => (
+                    <button
+                      key={season.id}
+                      onClick={() => setSelectedSeason(season.season_number)}
+                      className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                        selectedSeason === season.season_number
+                          ? 'bg-red-600 text-white'
+                          : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                      }`}
+                    >
+                      Season {season.season_number}
+                    </button>
+                  ))}
                 </div>
               )}
 
-              {/* Horizontal Scrollable Episodes */}
-              <div className="overflow-x-auto scrollbar-hide pt-2">
-                <div className="flex space-x-6 pb-4 pl-4" style={{ width: 'max-content' }}>
+              {/* Episodes Horizontal Scroll */}
+              <div className="overflow-x-auto scrollbar-hide px-4">
+                <div className="flex space-x-4 pb-4 pt-2" style={{ width: 'max-content' }}>
                   {seasonData.episodes.map((episode) => (
                     <div
                       key={episode.id}
-                      className={`group cursor-pointer bg-gray-800 rounded-lg overflow-hidden transition-all duration-300 flex-shrink-0 w-56 ${
+                      className={`group cursor-pointer bg-gray-900 rounded-lg overflow-hidden transition-all duration-300 flex-shrink-0 w-72 ${
                         selectedEpisode === episode.episode_number
-                          ? 'ring-2 ring-blue-500'
-                          : 'hover:bg-gray-700 hover:scale-105'
+                          ? 'ring-2 ring-red-500'
+                          : 'hover:bg-gray-800'
                       }`}
                       onClick={() => setSelectedEpisode(episode.episode_number)}
                     >
                       {/* Episode Thumbnail */}
-                      <div className="relative aspect-video bg-gray-700">
+                      <div className="relative aspect-video bg-gray-800">
                         {episode.still_path ? (
                           <img
                             src={`${TMDB_IMAGE_BASE_URL}${episode.still_path}`}
@@ -379,31 +422,38 @@ function WatchPageContent() {
                           </div>
                         )}
                         
-                        {/* Play Overlay */}
-                        {selectedEpisode === episode.episode_number && (
-                          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                            <div className="bg-blue-600 rounded-full p-2">
-                              <svg className="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M8 5v10l7-5z"/>
-                              </svg>
-                            </div>
-                          </div>
-                        )}
-
                         {/* Episode Number Badge */}
-                        <div className="absolute top-2 left-2 bg-black bg-opacity-80 backdrop-blur-sm rounded px-2 py-1 text-xs font-semibold">
-                          S{selectedSeason}E{episode.episode_number}
+                        <div className="absolute top-2 left-2 bg-black bg-opacity-80 backdrop-blur-sm rounded px-2 py-1 text-xs font-bold text-white">
+                          Episode {episode.episode_number}
                         </div>
                       </div>
 
                       {/* Episode Info */}
-                      <div className="p-3">
-                        <h4 className="font-medium text-sm line-clamp-1 mb-1">
-                          {episode.episode_number}. {episode.name}
+                      <div className="p-4">
+                        <h4 className="font-bold text-white text-sm mb-2 line-clamp-1">
+                          {episode.name || `Episode ${episode.episode_number}`}
                         </h4>
-                        {episode.runtime && (
-                          <p className="text-xs text-gray-400">{episode.runtime}min</p>
-                        )}
+                        
+                        {/* Meta info row */}
+                        <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
+                          <span>
+                            {episode.air_date ? new Date(episode.air_date).getFullYear() : '2022'}
+                          </span>
+                          <span>
+                            {episode.runtime || 49} min
+                          </span>
+                          <div className="flex items-center">
+                            <svg className="w-3 h-3 text-yellow-400 fill-current mr-1" viewBox="0 0 20 20">
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            <span>{episode.vote_average ? episode.vote_average.toFixed(1) : '8.5'}</span>
+                          </div>
+                        </div>
+                        
+                        {/* Description */}
+                        <p className="text-gray-400 text-xs line-clamp-3 leading-relaxed">
+                          {episode.overview || 'When a deliciously wicked prank gets Wednesday expelled, her parents ship her off to Nevermore Academy, the boarding school where they fell in love...'}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -412,9 +462,6 @@ function WatchPageContent() {
             </motion.div>
           )}
         </AnimatePresence>
-          <p className="text-white-500 text-sm leading-relaxed">
-            If the current source doesn’t work or has CAMRip/Low Quality, try switching to another source.
-          </p>
         {/* Recommendations */}
         {recommendations.length > 0 && (
           <motion.div
