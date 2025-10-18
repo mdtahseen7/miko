@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -14,7 +14,7 @@ import {
   filterAdultContent,
   blockedMovieIds
 } from '@/lib/utils';
-import type { Movie, TVShow, Season, Episode } from '@/lib/types';
+import type { Movie, TVShow, Season, Episode, WatchLaterItem, Video } from '@/lib/types';
 import Navbar from '@/components/Navbar';
 
 function DetailsPageContent() {
@@ -24,27 +24,79 @@ function DetailsPageContent() {
   const [loading, setLoading] = useState(true);
   const [selectedSeason, setSelectedSeason] = useState<number>(1);
   const [seasonData, setSeasonData] = useState<Season | null>(null);
-  const [showSearch, setShowSearch] = useState(false);
   const [watchLaterCount, setWatchLaterCount] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [watchLater, setWatchLater] = useState<any[]>([]);
+  // Navbar search is not used in this page; keep a stable string to satisfy prop
+  const searchQuery = '';
+  const [watchLater, setWatchLater] = useState<WatchLaterItem[]>([]);
 
   const contentId = searchParams.get('id');
   const contentType = searchParams.get('type') as 'movie' | 'tv';
+
+  // Helpers: meta shapes
+  type MovieReleaseMeta = {
+    release_dates?: {
+      results?: Array<{
+        iso_3166_1: string;
+        release_dates?: Array<{ certification?: string }>;
+      }>;
+    };
+  };
+  type TVRatingMeta = {
+    content_ratings?: {
+      results?: Array<{
+        iso_3166_1: string;
+        rating?: string;
+      }>;
+    };
+  };
+
+  const loadWatchLater = useCallback(() => {
+    const saved = getLocalStorage('watchLater', [] as WatchLaterItem[]);
+    setWatchLater(saved as WatchLaterItem[]);
+    setWatchLaterCount(saved.length);
+  }, []);
+
+  const loadContent = useCallback(async () => {
+    if (!contentId || !contentType) return;
+    setLoading(true);
+    try {
+      const data = await fetchContentDetails(contentId, contentType);
+      setContent(data);
+      // If it's a TV show, load the first non-specials season (season_number > 0) by default
+      if (contentType === 'tv' && data?.seasons?.length) {
+        const firstReal = data.seasons.find((s: Season) => s.season_number > 0);
+        setSelectedSeason(firstReal?.season_number || 1);
+      }
+    } catch (error) {
+      console.error('Error loading content:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [contentId, contentType]);
+
+  const loadSeasonData = useCallback(async () => {
+    if (!contentId || !selectedSeason) return;
+    try {
+      const data = await fetchSeasonDetails(contentId, selectedSeason);
+      setSeasonData(data);
+    } catch (error) {
+      console.error('Error loading season data:', error);
+    }
+  }, [contentId, selectedSeason]);
 
   useEffect(() => {
     if (contentId && contentType) {
       loadContent();
       loadWatchLater();
     }
-  }, [contentId, contentType]);
+  }, [contentId, contentType, loadContent, loadWatchLater]);
 
   useEffect(() => {
     if (content && contentType === 'tv' && selectedSeason) {
       loadSeasonData();
     }
-  }, [content, selectedSeason]);
+  }, [content, contentType, selectedSeason, loadSeasonData]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -55,41 +107,11 @@ function DetailsPageContent() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const loadWatchLater = () => {
-    const saved = getLocalStorage('watchLater', []);
-    setWatchLater(saved);
-    setWatchLaterCount(saved.length);
-  };
+  // (moved above) loadWatchLater via useCallback
 
-  const loadContent = async () => {
-    if (!contentId || !contentType) return;
-    
-    setLoading(true);
-    try {
-      const data = await fetchContentDetails(contentId, contentType);
-      setContent(data);
-      
-      // If it's a TV show, load the first season by default
-      if (contentType === 'tv' && data?.number_of_seasons) {
-        setSelectedSeason(1);
-      }
-    } catch (error) {
-      console.error('Error loading content:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // (moved above) loadContent via useCallback
 
-  const loadSeasonData = async () => {
-    if (!contentId || !selectedSeason) return;
-    
-    try {
-      const data = await fetchSeasonDetails(contentId, selectedSeason);
-      setSeasonData(data);
-    } catch (error) {
-      console.error('Error loading season data:', error);
-    }
-  };
+  // (moved above) loadSeasonData via useCallback
 
   const addToWatchLater = () => {
     if (!content) return;
@@ -136,10 +158,7 @@ function DetailsPageContent() {
     return `${TMDB_IMAGE_BASE_URL.replace('w500', 'w1280')}${content.backdrop_path}`;
   };
 
-  const getPosterUrl = () => {
-    if (!content?.poster_path) return '/placeholder-poster.jpg';
-    return `${TMDB_IMAGE_BASE_URL}${content.poster_path}`;
-  };
+  // Removed unused getPosterUrl
 
   const getTitle = () => {
     if (!content) return '';
@@ -172,15 +191,17 @@ function DetailsPageContent() {
   const getCertification = () => {
     if (!content) return '';
     try {
-      if (contentType === 'movie' && (content as any).release_dates) {
-        const rels = (content as any).release_dates.results || [];
-        const us = rels.find((r: any) => r.iso_3166_1 === 'US');
-        const cert = us?.release_dates?.find((d: any) => d.certification)?.certification;
+      if (contentType === 'movie') {
+        const meta = (content as unknown as Movie & MovieReleaseMeta).release_dates;
+        const rels = meta?.results ?? [];
+        const us = rels.find((r) => r.iso_3166_1 === 'US');
+        const cert = us?.release_dates?.find((d) => d.certification)?.certification;
         return cert || '';
       }
-      if (contentType === 'tv' && (content as any).content_ratings) {
-        const ratings = (content as any).content_ratings.results || [];
-        const us = ratings.find((r: any) => r.iso_3166_1 === 'US');
+      if (contentType === 'tv') {
+        const meta = (content as unknown as TVShow & TVRatingMeta).content_ratings;
+        const ratings = meta?.results ?? [];
+        const us = ratings.find((r) => r.iso_3166_1 === 'US');
         return us?.rating || '';
       }
     } catch {}
@@ -191,30 +212,28 @@ function DetailsPageContent() {
 
   const trailer = (() => {
     if (!content) return null;
-    const vids = (content as any).videos?.results || [];
-    return vids.find((v: any) => v.type === 'Trailer' && v.site === 'YouTube') || vids[0] || null;
+    const vids: Video[] = content.videos?.results || [];
+    return vids.find((v) => v.type === 'Trailer' && v.site === 'YouTube') || vids[0] || null;
   })();
 
   // Build recommendations list from TMDB 'similar' results already included in details fetch
   const getRecommendations = () => {
-    if (!content) return [] as any[];
-    const similar = (content as any).similar?.results || [];
-    if (!Array.isArray(similar) || similar.length === 0) return [] as any[];
+    if (!content) return [] as Array<Movie | TVShow>;
+    const similar: Array<Movie | TVShow> = (content.similar?.results as Array<Movie | TVShow>) || [];
+    if (!Array.isArray(similar) || similar.length === 0) return [] as Array<Movie | TVShow>;
     // Basic filtering: remove current item, blocked IDs, missing posters, low rated noise, adult-ish content
     const allowAdult = false; // always filter here; could expose toggle later
-    let recs = filterAdultContent(
-      similar.filter((item: any) =>
-        item.id !== content.id &&
-        !blockedMovieIds.includes(item.id?.toString()) &&
-        item.poster_path
-      ),
-      allowAdult
+    const base = similar.filter((item) =>
+      item.id !== content.id &&
+      !blockedMovieIds.includes(item.id?.toString()) &&
+      Boolean(item.poster_path)
     );
+    let recs = filterAdultContent(base, allowAdult) as Array<Movie | TVShow>;
     // Optional quality filtering
-    recs = recs.filter((r: any) => (r.vote_average || 0) >= 5.5);
+    recs = recs.filter((r) => (r.vote_average || 0) >= 5.5);
     // De-duplicate by id
     const seen = new Set();
-    const unique: any[] = [];
+    const unique: Array<Movie | TVShow> = [];
     for (const r of recs) { if (!seen.has(r.id)) { seen.add(r.id); unique.push(r); } }
     return unique.slice(0, 15);
   };
@@ -257,7 +276,7 @@ function DetailsPageContent() {
         <div className="pt-24 flex items-center justify-center min-h-screen">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Content Not Found</h1>
-            <p className="text-gray-400 mb-6">The content you're looking for could not be found.</p>
+            <p className="text-gray-400 mb-6">The content you are looking for could not be found.</p>
             <Link 
               href="/"
               className="inline-flex items-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
@@ -471,7 +490,7 @@ function DetailsPageContent() {
                 {/* Scroll indicators */}
                 <div className="absolute top-1/2 -left-4 transform -translate-y-1/2 scroll-button">
                   <button 
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.preventDefault();
                       const container = e.currentTarget.parentElement?.parentElement?.querySelector('.overflow-x-auto');
                       if (container) {
@@ -488,7 +507,7 @@ function DetailsPageContent() {
                 
                 <div className="absolute top-1/2 -right-4 transform -translate-y-1/2 scroll-button">
                   <button 
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.preventDefault();
                       const container = e.currentTarget.parentElement?.parentElement?.querySelector('.overflow-x-auto');
                       if (container) {
@@ -519,9 +538,10 @@ function DetailsPageContent() {
             <div className="episodes-slider group">
               <div className="overflow-x-auto scrollbar-hide">
                 <div className="flex space-x-4 sm:space-x-6 pb-3 sm:pb-4" style={{ width: 'max-content' }}>
-                  {recommendations.map((item: any) => {
-                    const title = item.title || item.name;
-                    const year = (item.release_date || item.first_air_date || '').slice(0,4);
+                  {recommendations.map((item: Movie | TVShow) => {
+                    const title = 'title' in item ? item.title : item.name;
+                    const yearSrc = 'release_date' in item ? item.release_date : item.first_air_date;
+                    const year = (yearSrc || '').slice(0,4);
                     const mediaType = contentType; // similar returns same type
                     return (
                       <Link
@@ -562,7 +582,7 @@ function DetailsPageContent() {
               {/* Horizontal scroll buttons (reuse style) */}
               <div className="absolute top-1/2 -left-4 transform -translate-y-1/2 scroll-button">
                 <button 
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                     e.preventDefault();
                     const container = e.currentTarget.parentElement?.parentElement?.querySelector('.overflow-x-auto');
                     container?.scrollBy({ left: -400, behavior: 'smooth' });
@@ -574,7 +594,7 @@ function DetailsPageContent() {
               </div>
               <div className="absolute top-1/2 -right-4 transform -translate-y-1/2 scroll-button">
                 <button 
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                     e.preventDefault();
                     const container = e.currentTarget.parentElement?.parentElement?.querySelector('.overflow-x-auto');
                     container?.scrollBy({ left: 400, behavior: 'smooth' });
