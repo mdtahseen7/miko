@@ -2,13 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 
 export default function TermsOfService() {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [watchLaterCount, setWatchLaterCount] = useState(0);
+  const [watchLaterCount] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -65,7 +64,7 @@ export default function TermsOfService() {
             <section>
               <h2 className="text-2xl font-semibold mb-4 text-white">1. Acceptance of Terms</h2>
               <p className="text-gray-300 leading-relaxed">
-                By accessing and using Miko ("the Service"), you accept and agree to be bound by the terms 
+                By accessing and using Miko (&quot;the Service&quot;), you accept and agree to be bound by the terms 
                 and provision of this agreement. If you do not agree to abide by the above, please do not 
                 use this service. These Terms of Service apply to all visitors, users, and others who 
                 access or use the Service.
@@ -106,7 +105,7 @@ export default function TermsOfService() {
                 </p>
                 <ul className="list-disc list-inside text-gray-300 space-y-2">
                   <li>Compliance with copyright and intellectual property laws</li>
-                  <li>Adherence to your jurisdiction's streaming and media consumption regulations</li>
+                  <li>Adherence to your jurisdiction&#39;s streaming and media consumption regulations</li>
                   <li>Respect for content licensing restrictions</li>
                   <li>Following age-appropriate content guidelines</li>
                 </ul>
@@ -167,7 +166,7 @@ export default function TermsOfService() {
                 <h3 className="text-xl font-medium text-purple-400 mt-6">Authentication Services</h3>
                 <p className="text-gray-300 leading-relaxed">
                   We use Clerk for authentication services. By creating an account, you agree to be bound 
-                  by Clerk's terms of service and privacy policy in addition to ours.
+                  by Clerk&#39;s terms of service and privacy policy in addition to ours.
                 </p>
               </div>
             </section>
@@ -229,7 +228,7 @@ export default function TermsOfService() {
                 
                 <h3 className="text-xl font-medium text-purple-400 mb-4">Content Disclaimer</h3>
                 <p className="text-gray-300 leading-relaxed mb-4">
-                  The information on this Service is provided on an "as is" basis. To the fullest extent 
+                  The information on this Service is provided on an &quot;as is&quot; basis. To the fullest extent 
                   permitted by law, we exclude all representations, warranties, and conditions relating to 
                   our Service and the use of this Service.
                 </p>

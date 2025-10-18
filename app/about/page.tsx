@@ -2,13 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 
 export default function AboutPage() {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [watchLaterCount, setWatchLaterCount] = useState(0);
+  const [watchLaterCount] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -69,12 +68,12 @@ export default function AboutPage() {
           <div>
             <h2 className="text-3xl font-bold mb-6 text-white">Our Mission</h2>
             <p className="text-gray-300 leading-relaxed mb-6 text-lg">
-              At Miko, we believe that quality entertainment shouldn't be locked behind multiple paywalls. 
+              At Miko, we believe that quality entertainment should not be locked behind multiple paywalls. 
               Our mission is to democratize access to movies, TV shows, and live sports by aggregating 
               content from various sources into one seamless platform.
             </p>
             <p className="text-gray-300 leading-relaxed text-lg">
-              We're committed to providing a user-friendly, secure, and comprehensive streaming experience 
+              We are committed to providing a user-friendly, secure, and comprehensive streaming experience 
               while maintaining transparency about our sources and encouraging responsible usage.
             </p>
           </div>

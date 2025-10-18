@@ -1,14 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 
 export default function PrivacyPolicy() {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [watchLaterCount, setWatchLaterCount] = useState(0);
+  const [watchLaterCount] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -65,7 +63,7 @@ export default function PrivacyPolicy() {
             <section>
               <h2 className="text-2xl font-semibold mb-4 text-white">Introduction</h2>
               <p className="text-gray-300 leading-relaxed">
-                Welcome to Miko ("we," "our," or "us"). This Privacy Policy explains how we collect, use, 
+                Welcome to Miko (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). This Privacy Policy explains how we collect, use, 
                 disclose, and safeguard your information when you use our streaming platform service. 
                 Please read this privacy policy carefully. If you do not agree with the terms of this 
                 privacy policy, please do not access the site.
@@ -123,7 +121,7 @@ export default function PrivacyPolicy() {
               <h3 className="text-xl font-medium mb-3 text-purple-400">Authentication</h3>
               <p className="text-gray-300 leading-relaxed mb-4">
                 We use Clerk for authentication services. When you create an account, your information 
-                is processed according to Clerk's privacy policy. We recommend reviewing their privacy 
+                is processed according to Clerk&#39;s privacy policy. We recommend reviewing their privacy 
                 practices at clerk.com.
               </p>
 
@@ -187,7 +185,7 @@ export default function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-4 text-white">Children's Privacy</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-white">Children&#39;s Privacy</h2>
               <p className="text-gray-300 leading-relaxed">
                 Our service is not intended for children under 13 years of age. We do not knowingly 
                 collect personal information from children under 13. If you are a parent or guardian 
@@ -209,7 +207,7 @@ export default function PrivacyPolicy() {
               <h2 className="text-2xl font-semibold mb-4 text-white">Changes to This Privacy Policy</h2>
               <p className="text-gray-300 leading-relaxed">
                 We may update this Privacy Policy from time to time. We will notify you of any changes 
-                by posting the new Privacy Policy on this page and updating the "Last updated" date. 
+                by posting the new Privacy Policy on this page and updating the &quot;Last updated&quot; date. 
                 Your continued use of the service after any changes indicates your acceptance of the 
                 updated Privacy Policy.
               </p>

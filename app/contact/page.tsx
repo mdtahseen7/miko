@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 
 export default function ContactPage() {
@@ -17,7 +16,7 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [watchLaterCount, setWatchLaterCount] = useState(0);
+  const [watchLaterCount] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -97,7 +96,7 @@ export default function ContactPage() {
             Get in Touch
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Have questions, feedback, or need support? We'd love to hear from you. 
+            Have questions, feedback, or need support? We would love to hear from you. 
             Reach out through any of the channels below or send us a message.
           </p>
         </div>
@@ -318,7 +317,7 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">Message Sent Successfully!</h3>
-                <p className="text-gray-400">Thank you for contacting us. We'll get back to you soon.</p>
+                <p className="text-gray-400">Thank you for contacting us. We&#39;ll get back to you soon.</p>
               </div>
             )}
           </div>
