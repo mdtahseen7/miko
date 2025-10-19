@@ -10,6 +10,16 @@ export const availableSources = [
         }
     },
     {
+        id: 'VidNest',
+        name: 'VidNest',
+        isFrench: false,
+        requiresNoSandbox: true,
+        urls: {
+            movie: 'https://vidnest.fun/movie/{id}',
+            tv: 'https://vidnest.fun/tv/{id}/{season}/{episode}'
+        }
+    },
+    {
         id: 'SuperEmbed',
         name: 'SuperEmbed',
         isFrench: false,
