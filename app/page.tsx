@@ -353,7 +353,8 @@ export default function HomePage() {
   };
 
   const handleHeroMoreDetails = (movie: ContentItem) => {
-    alert(`More details for: ${movie.title || movie.name}`);
+    alert(`More details for: ${movie.title || movie.name}
+    This prompt will be changed to show actual details in the future.`);
   };
 
   const getFilteredContent = (): (ContentItem | any)[] => {
