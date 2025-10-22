@@ -32,7 +32,7 @@ export default function AboutPage() {
   };
 
   const handleViewChange = (view: string) => {
-    // Navigate to home with the selected view
+  
     window.location.href = `/?view=${view}`;
   };
 

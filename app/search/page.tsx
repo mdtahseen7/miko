@@ -26,9 +26,8 @@ export default function SearchPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Cache for detail runtimes to avoid repeated fetches between queries
   const runtimeCache = useRef<Record<string, number>>({});
-  const lastBasicResults = useRef<string>(''); // store last query we enriched
+  const lastBasicResults = useRef<string>(''); 
 
   const performSearch = useCallback(async (q: string) => {
     if (!q.trim()) { setResults([]); return; }
@@ -42,31 +41,28 @@ export default function SearchPage() {
         allowAdult
       );
 
-      // Year filtering: hide very old content (before 2004) unless user explicitly searched an old year
       const MIN_YEAR = 2004;
-      const explicitOlderYearMatch = q.match(/\b(19\d{2}|200[0-3])\b/); // user typed an older year
+      const explicitOlderYearMatch = q.match(/\b(19\d{2}|200[0-3])\b/);
       if (!explicitOlderYearMatch) {
         filtered = filtered.filter((item: any) => {
           const date = item.release_date || item.first_air_date;
-          if (!date) return true; // keep if unknown
+          if (!date) return true; 
           const year = parseInt(date.slice(0,4));
           if (!year) return true;
           return year >= MIN_YEAR;
         });
       }
 
-      // Exclude reality shows unless user explicitly searches for them
       const wantsReality = /\breality\b/i.test(qLower);
       if (!wantsReality) {
         filtered = filtered.filter((item:any) => {
-          if (item.genre_ids?.includes(10764)) return false; // 10764 = Reality
+          if (item.genre_ids?.includes(10764)) return false;
           const t = (item.title || item.name || '').toLowerCase();
           if (t.includes('reality')) return false;
           return true;
         });
       }
 
-  // Runtime filtering moved to deferred enrichment to reduce initial latency
 
       const normalize = (s:string) => s.toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
       const queryNorm = normalize(qLower);
@@ -87,10 +83,9 @@ export default function SearchPage() {
       filtered = filtered.filter((i:any)=> i.__rel >= minScore);
       filtered.sort((a:any,b:any)=> (b.__rel - a.__rel) || ((b.popularity||0)-(a.popularity||0)) );
       filtered = filtered.map((i:any)=>{ delete i.__rel; return i; });
-      const base = filtered.slice(0,60); // keep extra for later filtering
+      const base = filtered.slice(0,60); 
       setResults(base.slice(0,40));
 
-      // Defer runtime filtering enrichment (non-blocking)
       const allowShort = /\b(short|clip|mini|reel)\b/i.test(qLower);
       const MIN_DURATION_MIN = 40;
       if (!allowShort && base.length && lastBasicResults.current !== q) {
@@ -113,7 +108,6 @@ export default function SearchPage() {
             if (!dur) return true;
             return dur >= MIN_DURATION_MIN;
           }).slice(0,40);
-          // Only update if user hasn't changed query meanwhile
           setResults(prev => q === query ? filteredRuntime : prev);
         })();
       }
@@ -125,7 +119,7 @@ export default function SearchPage() {
   }, []);
 
   useEffect(()=>{
-  const h = setTimeout(()=>performSearch(query), 550); // slightly longer debounce to reduce API spam
+  const h = setTimeout(()=>performSearch(query), 550); 
     return ()=>clearTimeout(h);
   }, [query, performSearch]);
 
@@ -140,7 +134,7 @@ export default function SearchPage() {
         return by - ay;
       });
       case 'title': return list.sort((a:any,b:any)=> (a.title||a.name||'').localeCompare(b.title||b.name||''));
-      default: return list; // relevance already applied
+      default: return list; 
     }
   }, [results, sortBy]);
 

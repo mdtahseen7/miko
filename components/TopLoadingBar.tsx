@@ -12,7 +12,6 @@ export default function TopLoadingBar({ isLoading }: TopLoadingBarProps) {
   useEffect(() => {
     if (isLoading) {
       setShow(true)
-      // Auto hide after a short duration
       const timer = setTimeout(() => {
         setShow(false)
       }, 600)

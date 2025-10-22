@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Miko - Watch Movies & TV Shows',
     description: 'Click, watch, enjoy. Miko breaks down the paywall, ensuring that quality content is accessible to everyone.',
-    url: 'https://miko-stream.app',
+    url: 'https://mikostream.dpdns.org',
     images: [
       {
         url: '/logo.png',
@@ -38,20 +38,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-HGL07M90WG"
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-HGL07M90WG');
-            `,
-          }}
-        />
         <meta name="viewport" content="width=device-width, initial-scale=0.9" />
         <meta name="theme-color" content="#A17FC0" />
   {/* PWA manifest and icons */}

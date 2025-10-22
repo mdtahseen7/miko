@@ -107,11 +107,7 @@ function DetailsPageContent() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // (moved above) loadWatchLater via useCallback
 
-  // (moved above) loadContent via useCallback
-
-  // (moved above) loadSeasonData via useCallback
 
   const addToWatchLater = () => {
     if (!content) return;
@@ -157,8 +153,6 @@ function DetailsPageContent() {
     if (!content?.backdrop_path) return '/placeholder-backdrop.jpg';
     return `${TMDB_IMAGE_BASE_URL.replace('w500', 'w1280')}${content.backdrop_path}`;
   };
-
-  // Removed unused getPosterUrl
 
   const getTitle = () => {
     if (!content) return '';
@@ -216,13 +210,13 @@ function DetailsPageContent() {
     return vids.find((v) => v.type === 'Trailer' && v.site === 'YouTube') || vids[0] || null;
   })();
 
-  // Build recommendations list from TMDB 'similar' results already included in details fetch
+
   const getRecommendations = () => {
     if (!content) return [] as Array<Movie | TVShow>;
     const similar: Array<Movie | TVShow> = (content.similar?.results as Array<Movie | TVShow>) || [];
     if (!Array.isArray(similar) || similar.length === 0) return [] as Array<Movie | TVShow>;
     // Basic filtering: remove current item, blocked IDs, missing posters, low rated noise, adult-ish content
-    const allowAdult = false; // always filter here; could expose toggle later
+    const allowAdult = false;
     const base = similar.filter((item) =>
       item.id !== content.id &&
       !blockedMovieIds.includes(item.id?.toString()) &&
@@ -302,7 +296,7 @@ function DetailsPageContent() {
         onSearchChange={() => {}}
       />
 
-      {/* Hero Section with Backdrop */}
+      {/* Hero Section */}
   <div className="relative h-[88vh] overflow-hidden">
         {/* Backdrop Image */}
         <div className="absolute inset-0">
@@ -384,7 +378,7 @@ function DetailsPageContent() {
         </div>
       </div>
 
-      {/* Episodes Section for TV Shows */}
+      {/* Episodes Section */}
   {contentType === 'tv' && content && 'number_of_seasons' in content && (
         <div className="py-8 sm:py-10 md:py-12 bg-black/50">
           <div className="container mx-auto px-4 lg:px-8">

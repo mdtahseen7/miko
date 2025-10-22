@@ -167,17 +167,15 @@ export const extractAniListSeasons = (aniListData: any): AniListSeason[] => {
   return seasons;
 };
 
-// Update episode name to match new numbering
 const updateEpisodeName = (originalName: string, newEpisodeNumber: number): string => {
   if (!originalName) return `Episode ${newEpisodeNumber}`;
   
-  // Pattern to match episode numbers in various formats
   const patterns = [
     /Episode\s+(\d+)/i,
     /Ep\.?\s*(\d+)/i,
-    /第(\d+)話/,  // Japanese format
-    /^\d+\./,     // Starting with number and dot
-    /^(\d+)\s*-/  // Starting with number and dash
+    /第(\d+)話/, 
+    /^\d+\./,    
+    /^(\d+)\s*-/  
   ];
   
   let updatedName = originalName;
@@ -199,7 +197,6 @@ const updateEpisodeName = (originalName: string, newEpisodeNumber: number): stri
     }
   }
   
-  // If no pattern matched, prepend episode number
   if (updatedName === originalName && !updatedName.toLowerCase().includes('episode')) {
     updatedName = `Episode ${newEpisodeNumber}: ${originalName}`;
   }
@@ -207,7 +204,6 @@ const updateEpisodeName = (originalName: string, newEpisodeNumber: number): stri
   return updatedName;
 };
 
-// Main mapper function: Merge AniList season structure with TMDB episode details
 export const mapAniListToTmdb = (aniListSeasons: AniListSeason[], tmdbEpisodes: any[], tmdbData: any) => {
   if (!aniListSeasons.length || !tmdbEpisodes.length) {
     return null;
@@ -225,17 +221,14 @@ export const mapAniListToTmdb = (aniListSeasons: AniListSeason[], tmdbEpisodes: 
   for (const aniListSeason of aniListSeasons) {
     const seasonEpisodes: any[] = [];
     
-    // Get episodes for this season
     for (let ep = 1; ep <= aniListSeason.episodeCount; ep++) {
       const tmdbEpisode = tmdbEpisodes[episodeIndex] || {};
       
-      // Create new episode with updated numbering but preserve all TMDB data
       const mappedEpisode = {
-        ...tmdbEpisode, // Preserve all TMDB fields
+        ...tmdbEpisode,
         season_number: aniListSeason.seasonNumber,
         episode_number: ep,
         name: updateEpisodeName(tmdbEpisode.name, ep),
-        // Preserve original data for reference
         _original_episode_number: tmdbEpisode.episode_number,
         _original_name: tmdbEpisode.name,
         _original_season: tmdbEpisode.season_number
@@ -245,7 +238,6 @@ export const mapAniListToTmdb = (aniListSeasons: AniListSeason[], tmdbEpisodes: 
       episodeIndex++;
     }
     
-    // Create season object matching TMDB structure
     const mappedSeason = {
       id: `${tmdbData.id}-season-${aniListSeason.seasonNumber}`,
       air_date: seasonEpisodes[0]?.air_date || null,
@@ -261,9 +253,8 @@ export const mapAniListToTmdb = (aniListSeasons: AniListSeason[], tmdbEpisodes: 
     mappedSeasons.push(mappedSeason);
   }
   
-  // Return data in exact TMDB structure with merged content
   const mergedData = {
-    ...tmdbData, // Preserve all original TMDB data
+    ...tmdbData,
     seasons: mappedSeasons,
     number_of_seasons: mappedSeasons.length,
     number_of_episodes: aniListSeasons.reduce((total, season) => total + season.episodeCount, 0),
@@ -281,24 +272,20 @@ export const mapAniListToTmdb = (aniListSeasons: AniListSeason[], tmdbEpisodes: 
   return mergedData;
 };
 
-// Helper function to get season breakdown for an anime
 export const getAnimeSeasonBreakdown = async (title: string): Promise<AniListSeason[]> => {
   try {
-    // Search for anime on AniList
     const searchResult = await searchAniListAnime(title);
     if (!searchResult) {
       console.warn('[AniList] No search results for:', title);
       return [];
     }
     
-    // Get detailed data including relations
     const detailedData = await getAniListAnimeDetails(searchResult.id);
     if (!detailedData) {
       console.warn('[AniList] No detailed data for ID:', searchResult.id);
       return [];
     }
     
-    // Extract season breakdown
     const seasons = extractAniListSeasons(detailedData);
     console.log('[AniList] Season breakdown for', title, ':', seasons);
     

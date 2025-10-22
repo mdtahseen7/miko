@@ -8,13 +8,12 @@ export default function LoadingBar() {
   const pathname = usePathname()
 
   useEffect(() => {
-    // Start loading when pathname changes
     setLoading(true)
     
     // Simulate loading time with realistic timing
     const timer = setTimeout(() => {
       setLoading(false)
-    }, 800) // Slightly longer for a more premium feel
+    }, 800)
 
     return () => clearTimeout(timer)
   }, [pathname])

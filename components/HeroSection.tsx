@@ -28,7 +28,6 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
   const [watchLater, setWatchLater] = useState<any[]>([]);
   const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
 
-  // Load watch later list once
   useEffect(() => {
     const saved = getLocalStorage('watchLater', []);
     setWatchLater(saved);
@@ -38,11 +37,10 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
     const loadFeaturedMovies = async () => {
       try {
         setLoading(true);
-        // Fetch popular movies (first page)
+
         const moviesResponse = await fetchMovies(1);
         
         if (moviesResponse.results && moviesResponse.results.length > 0) {
-          // Get top 7 movies for carousel
           const topMovies = moviesResponse.results.slice(0, 6);
           const movieDetailsPromises = topMovies.map((movie: any) => fetchContentDetails(movie.id.toString(), 'movie'));
           
@@ -51,7 +49,6 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
           
           if (validMovies.length > 0) {
             setFeaturedMovies(validMovies);
-            // Set initial load flag after content is ready
             setTimeout(() => setHasInitiallyLoaded(true), 100);
           }
         }
@@ -65,7 +62,6 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
     loadFeaturedMovies();
   }, []);
 
-  // Auto-rotate carousel
   useEffect(() => {
     if (featuredMovies.length <= 1 || isPaused) return;
 
@@ -196,7 +192,6 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
             sizes="100vw"
           />
         </div>
-        {/* Dark overlay gradients now extend beneath navbar for better readability */}
   <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent" />
   <div className="absolute bottom-0 left-0 right-0 h-60 bg-gradient-to-t from-black via-black/70 to-transparent" />
       </div>

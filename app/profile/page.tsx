@@ -33,13 +33,11 @@ export default function ProfilePage() {
     location: '',
     website: ''
   })
-  // Navbar state
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [watchLaterCount, setWatchLaterCount] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Redirect if not authenticated
   useEffect(() => {
     if (!isLoaded) return
     if (!isSignedIn) {
@@ -48,7 +46,6 @@ export default function ProfilePage() {
     }
   }, [isLoaded, isSignedIn, router])
 
-  // Handle scroll for navbar
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 100);
@@ -70,7 +67,6 @@ export default function ProfilePage() {
   };
 
   const handleViewChange = (view: string) => {
-    // Navigate to home with the selected view
     window.location.href = `/?view=${view}`;
   };
 
@@ -131,7 +127,6 @@ export default function ProfilePage() {
   }
 
   const handleSignOut = () => {
-    // Clerk handles sign out through UserButton component
     router.push('/')
   }
 

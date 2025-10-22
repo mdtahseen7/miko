@@ -10,7 +10,6 @@ export default function PrivacyPolicy() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    // Handle scroll for navbar
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 100);
     };
@@ -31,7 +30,6 @@ export default function PrivacyPolicy() {
   };
 
   const handleViewChange = (view: string) => {
-    // Navigate to home with the selected view
     window.location.href = `/?view=${view}`;
   };
 

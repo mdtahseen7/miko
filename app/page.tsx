@@ -71,7 +71,7 @@ export default function HomePage() {
     loadContent();
     loadWatchLater();
     
-  // Add simple scroll listener for header effect
+
   const handleScroll = () => setIsScrolled(window.scrollY > 50);
   window.addEventListener('scroll', handleScroll, { passive: true });
   return () => window.removeEventListener('scroll', handleScroll);
@@ -83,7 +83,6 @@ export default function HomePage() {
     }
   }, [searchQuery]);
 
-  // Effect to restore scroll position after loading more content
   useEffect(() => {
     if (isLoadingMoreRef.current && !loading && savedScrollPositionRef.current > 0) {
       requestAnimationFrame(() => {
@@ -115,12 +114,11 @@ export default function HomePage() {
         fetchAmazonPrimeContent(amazonPrimePage)
       ]);
 
-      // Filter out blocked movies and apply content moderation (no adult content on homepage)
       const filteredMovies = filterAdultContent(
         moviesData.results?.filter(
           (movie: any) => !blockedMovieIds.includes(movie.id.toString())
         ) || [],
-        false // Don't allow adult content on homepage
+        false
       );
 
       const filteredHollywood = filterAdultContent(
@@ -187,12 +185,10 @@ export default function HomePage() {
   };
 
   const loadMoreContent = async (contentType: string) => {
-    // Prevent multiple simultaneous load requests
     if (loading || isLoadingMoreRef.current) {
       return;
     }
     
-    // Save current scroll position and mark that we're loading more
     isLoadingMoreRef.current = true;
     savedScrollPositionRef.current = window.scrollY;
     
@@ -277,15 +273,13 @@ export default function HomePage() {
           return;
       }
 
-      // Filter out blocked content and apply content moderation
       const filteredNewData = filterAdultContent(
         newData.results?.filter(
           (item: any) => !blockedMovieIds.includes(item.id.toString())
         ) || [],
-        false // Don't allow adult content in category pages
+        false
       );
 
-      // Append new content to existing content
       setContent([...currentContent, ...filteredNewData]);
       setPage(nextPage);
     } catch (error) {
@@ -305,18 +299,16 @@ export default function HomePage() {
     try {
       const results = await searchContent(searchQuery);
       
-      // Check if the search query contains adult-related terms
       const searchTerms = searchQuery.toLowerCase();
       const isAdultSearch = ['adult', 'sex', 'erotic', 'xxx', 'porn', 'explicit', 'nude'].some(
         term => searchTerms.includes(term)
       );
       
-      // Filter results - allow adult content only if explicitly searching for it
       const filteredResults = filterAdultContent(
         results.results?.filter(
           (item: any) => !blockedMovieIds.includes(item.id.toString())
         ) || [],
-        isAdultSearch // Allow adult content if searching for adult terms
+        isAdultSearch
       );
       
       setSearchResults(filteredResults);
@@ -355,15 +347,12 @@ export default function HomePage() {
   };
 
   const handleHeroWatchNow = (movie: ContentItem) => {
-    // Navigate to details page with the movie details
     const movieId = movie.id;
     const movieType = 'movie';
     window.location.href = `/details?id=${movieId}&type=${movieType}`;
   };
 
   const handleHeroMoreDetails = (movie: ContentItem) => {
-    // For now, we can show an alert or navigate to a details page
-    // You can implement a modal or navigate to a details page here
     alert(`More details for: ${movie.title || movie.name}`);
   };
 
@@ -552,12 +541,10 @@ export default function HomePage() {
   <main className={currentView === 'home' ? "pb-8" : "pt-24 pb-8"}>
         <div className="container mx-auto px-4">
           {/* Filters */}
-          {/* Hide genre/year filters on home page per request */}
           {currentView !== 'watchlater' && currentView !== 'home' && (
             <div className="mb-8 space-y-4">
               
               
-              {/* Content moderation notice */}
               {currentView !== 'search' && (
                 <div className="text-xs text-gray-500 flex items-center space-x-1">
                   <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -577,7 +564,7 @@ export default function HomePage() {
 
               {/* Popular Movies Section */}
               <ContentSection
-                title="🔥 Trending Movies"
+                title="Trending Movies"
                 subtitle="Most popular movies right now"
                 content={movies}
                 onAddToWatchLater={addToWatchLater}
@@ -588,7 +575,7 @@ export default function HomePage() {
               
               {/* Popular TV Shows Section */}
               <ContentSection
-                title="📺 Popular TV Shows"
+                title="Popular TV Shows"
                 subtitle="Binge-worthy series and shows"
                 content={tvShows}
                 onAddToWatchLater={addToWatchLater}
@@ -599,7 +586,7 @@ export default function HomePage() {
               
               {/* Hollywood Section */}
               <ContentSection
-                title="🎬 Hollywood"
+                title="Hollywood"
                 subtitle="Latest blockbusters and Hollywood hits"
                 content={hollywoodMovies}
                 onAddToWatchLater={addToWatchLater}
@@ -610,7 +597,7 @@ export default function HomePage() {
               
               {/* Bollywood Section */}
               <ContentSection
-                title="🎭 Bollywood"
+                title="Bollywood"
                 subtitle="Popular Hindi movies and entertainment"
                 content={bollywoodMovies}
                 onAddToWatchLater={addToWatchLater}
@@ -621,7 +608,7 @@ export default function HomePage() {
               
               {/* Anime Section */}
               <ContentSection
-                title="⭐ Anime"
+                title="Anime"
                 subtitle="Top Japanese animation series and movies"
                 content={animeContent}
                 onAddToWatchLater={addToWatchLater}
@@ -632,7 +619,7 @@ export default function HomePage() {
               
               {/* Netflix Section */}
               <ContentSection
-                title="🎬 Netflix Originals"
+                title="Netflix Originals"
                 subtitle="Exclusive Netflix movies and series"
                 content={netflixContent}
                 onAddToWatchLater={addToWatchLater}
@@ -643,7 +630,7 @@ export default function HomePage() {
               
               {/* Amazon Prime Section */}
               <ContentSection
-                title="📺 Amazon Prime Video"
+                title="Amazon Prime"
                 subtitle="Prime Video exclusive content"
                 content={amazonPrimeContent}
                 onAddToWatchLater={addToWatchLater}
@@ -686,8 +673,7 @@ export default function HomePage() {
                   </motion.div>
                 ))}
               </motion.div>
-              
-              {/* Load More Button */}
+
               {(currentView === 'movies' || currentView === 'tv' || currentView === 'hollywood' || currentView === 'bollywood' || currentView === 'anime' || currentView === 'netflix' || currentView === 'amazonprime') && getFilteredContent().length > 0 && (
                 <div className="flex justify-center mt-8">
                   <button

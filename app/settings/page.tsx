@@ -23,7 +23,6 @@ export default function SettingsPage() {
     loadSettings();
     loadWatchLater();
     
-    // Handle scroll for navbar
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
@@ -74,7 +73,6 @@ export default function SettingsPage() {
     } else if (view === 'livesports') {
       router.push('/livesports');
     } else if (view === 'settings') {
-      // Already on settings page
       return;
     } else {
       router.push(`/?view=${view}`);
@@ -250,7 +248,6 @@ export default function SettingsPage() {
                 <ul className="text-gray-400 space-y-1">
                   <li>• HD/4K Video Streaming</li>
                   <li>• TV Shows & Movies</li>
-                  <li>• Live Sports</li>
                   <li>• Watch Later List</li>
                   <li>• Multiple Video Sources</li>
                 </ul>

@@ -14,8 +14,8 @@ interface NavbarProps {
   watchLaterCount: number;
   isScrolled: boolean;
   onViewChange: (view: string) => void;
-  onSearchToggle: () => void; // kept for backward compatibility
-  onSearchChange: (query: string) => void; // legacy no-op on search page
+  onSearchToggle: () => void;
+  onSearchChange: (query: string) => void;
 }
 
 export default function Navbar({
@@ -35,7 +35,7 @@ export default function Navbar({
   const isAuthPage = pathname.startsWith('/auth');
 
   if (isAuthPage) {
-    return null; // Don't render navbar on auth pages
+    return null;
   }
 
   const handleViewChange = (view: string) => {
@@ -68,13 +68,10 @@ export default function Navbar({
               href="/" 
               className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
               onClick={(e) => {
-                // Always navigate to root and reset view state to home
-                // If we're already on the homepage route, prevent default routing to keep SPA smooth
                 if (typeof window !== 'undefined' && window.location.pathname === '/') {
                   e.preventDefault();
                 }
                 handleViewChange('home');
-                // Smooth scroll to top for better UX
                 if (typeof window !== 'undefined') {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
@@ -131,7 +128,7 @@ export default function Navbar({
           </div>
 
           {/* Right side icons & user */}
-          <div className="flex items-center space-x-5">{/* Increased spacing */}
+          <div className="flex items-center space-x-5">
             {currentView === 'watch-sports' && (
               <div className="flex items-center space-x-2 px-3 py-1 bg-red-600/90 backdrop-blur-sm rounded-sm">
                 <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
@@ -194,7 +191,6 @@ export default function Navbar({
                   </button>
                 </SignUpButton>
                 
-                {/* Hidden Sign In Option */}
                 <div className="absolute right-0 mt-2 w-28 bg-black/95 backdrop-blur-lg border border-white/10 rounded-md shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-100 z-50">
                   <div className="py-1">
                     <SignInButton mode="modal">

@@ -44,13 +44,6 @@ export default function ProfilePictureUpload({
       reader.onload = async (e) => {
         const base64 = e.target?.result as string
         
-        // In a real application, you would upload to a service like:
-        // - Cloudinary
-        // - AWS S3
-        // - Vercel Blob
-        // - Supabase Storage
-        
-        // For demo purposes, we'll store as base64 (not recommended for production)
         try {
           const response = await fetch('/api/user/upload-avatar', {
             method: 'POST',
@@ -66,7 +59,6 @@ export default function ProfilePictureUpload({
           if (response.ok) {
             const data = await response.json()
             onImageUpdate(data.imageUrl)
-            // Clerk automatically updates user data
           } else {
             throw new Error('Upload failed')
           }
@@ -110,7 +102,6 @@ export default function ProfilePictureUpload({
 
       if (response.ok) {
         onImageUpdate('')
-        // Clerk automatically updates user data
       } else {
         throw new Error('Failed to remove image')
       }
@@ -124,7 +115,6 @@ export default function ProfilePictureUpload({
 
   return (
     <div className="flex flex-col items-center space-y-4">
-      {/* Current Profile Picture */}
       <div className="relative">
         <div className="relative group">
           <Avatar

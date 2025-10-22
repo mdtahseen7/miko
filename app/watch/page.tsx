@@ -42,7 +42,6 @@ function WatchPageContent() {
   const seasonFromQuery = seasonParamStr ? parseInt(seasonParamStr, 10) : undefined;
   const episodeFromQuery = episodeParamStr ? parseInt(episodeParamStr, 10) : undefined;
 
-  // Ensure we only initialize episode from query once
   const initFromQueryRef = useRef(false);
 
   useEffect(() => {
@@ -68,7 +67,6 @@ function WatchPageContent() {
       const data = await fetchContentDetails(contentId, contentType);
       setContent(data);
 
-      // grab recommendations too
       const rec = await fetch(
         `https://api.themoviedb.org/3/${contentType}/${contentId}/recommendations?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`
       );
@@ -76,7 +74,6 @@ function WatchPageContent() {
       setRecommendations(recData.results || []);
 
       if (contentType === 'tv' && data?.seasons) {
-        // Prefer season from query if valid; else first available season > 0
         let targetSeason: number | undefined = undefined;
         if (typeof seasonFromQuery === 'number' && !Number.isNaN(seasonFromQuery)) {
           const exists = data.seasons.some((s: Season) => s.season_number === seasonFromQuery);
@@ -101,10 +98,8 @@ function WatchPageContent() {
       const data = await fetchSeasonDetails(contentId, selectedSeason);
       setSeasonData(data);
       
-      // Initialize selected episode from query if we're on the correct season; else default to 1
       let nextEpisode = 1;
       
-      // Check if current season matches the season from query and we have episode from query
       if (typeof seasonFromQuery === 'number' && 
           typeof episodeFromQuery === 'number' && 
           selectedSeason === seasonFromQuery && 
@@ -112,11 +107,10 @@ function WatchPageContent() {
         const valid = data.episodes?.some((e: any) => e.episode_number === episodeFromQuery);
         nextEpisode = valid ? episodeFromQuery : 1;
       } else if (!initFromQueryRef.current) {
-        // First time loading, but no valid query params
+
         nextEpisode = 1;
         initFromQueryRef.current = true;
       } else {
-        // Season changed, check if current episode exists in new season
         const stillValid = data.episodes?.some((e: any) => e.episode_number === selectedEpisode);
         nextEpisode = stillValid ? selectedEpisode : 1;
       }
@@ -172,7 +166,7 @@ function WatchPageContent() {
         onSearchChange={(q) => setSearchQuery(q)}
       />
 
-      {/* Netflix Hero */}
+      {/* Hero */}
       <motion.div 
         className="relative w-full h-[70vh]"
         initial={{ opacity: 0, scale: 1.1 }}
@@ -245,7 +239,7 @@ function WatchPageContent() {
         </motion.div>
       </motion.div>
 
-      {/* Player + Sources beside each other */}
+      {/* Player */}
       <motion.div 
         className="relative z-20 container mx-auto px-4 py-10 space-y-10"
         initial={{ opacity: 0, y: 50 }}
@@ -362,7 +356,7 @@ function WatchPageContent() {
               <p className="text-white-500 text-sm leading-relaxed">
                 If the current source doesn’t work or has CAMRip/Low Quality, try switching to another source.
               </p>
-        {/* Episodes (if TV) - Screenshot Style */}
+        {/* Episodes */}
         <AnimatePresence>
           {contentType === 'tv' && seasonData?.episodes && (
             <motion.div 
@@ -374,7 +368,7 @@ function WatchPageContent() {
             >
               <h3 className="text-2xl font-bold mb-6 text-white px-4">Episodes</h3>
               
-              {/* Season Selector - Button Style like screenshot */}
+              {/* Season Selector */}
               {(content as TVShow).seasons && (content as TVShow).seasons.filter(s => s.season_number > 0).length > 1 && (
                 <div className="flex flex-wrap gap-2 mb-6 px-4">
                   {(content as TVShow).seasons?.filter(s => s.season_number > 0).map(season => (
