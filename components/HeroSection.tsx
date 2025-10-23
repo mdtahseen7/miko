@@ -203,7 +203,8 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
 
   return (
     <motion.div 
-      className="relative h-screen bg-black"
+      className="relative h-screen md:h-screen bg-black"
+      style={{ height: 'calc(100vh - 4rem)' }}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       initial={{ opacity: 0 }}
