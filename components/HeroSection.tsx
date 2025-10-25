@@ -29,10 +29,16 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
   const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const saved = getLocalStorage('watchLater', []);
-    setWatchLater(saved);
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+    
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
   useEffect(() => {
@@ -215,7 +221,7 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
       <div className="absolute inset-0">
         <div className={`transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
           <Image
-            src={`https://image.tmdb.org/t/p/original${currentMovie.backdrop_path}`}
+            src={`https://image.tmdb.org/t/p/original${isMobile ? currentMovie.poster_path : currentMovie.backdrop_path}`}
             alt={currentMovie.title}
             fill
             className="object-cover object-center h-full w-full"
@@ -239,13 +245,14 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
 
       {/* Carousel Indicators - Desktop only */}
       {featuredMovies.length > 1 && (
-        <div className="hidden md:block absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30">
+        // <div className="hidden md:block absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30">
+        <div className="hidden md:block absolute bottom-8 right-10 z-30">
           <div className="flex space-x-3">
             {featuredMovies.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                   index === currentMovieIndex 
                     ? 'bg-white scale-110 shadow-lg' 
                     : 'bg-white/50 hover:bg-white/70'
@@ -259,7 +266,8 @@ export default function HeroSection({ onWatchNow, onMoreDetails }: HeroSectionPr
 
       {/* Desktop Main Content */}
       <motion.div 
-        className="hidden md:flex relative z-20 container mx-auto px-4 sm:px-6 lg:px-16 h-full items-start pt-28 sm:pt-24 md:pt-32 lg:pt-48 pb-12 sm:pb-20"
+        // className="hidden md:flex relative z-20 container mx-auto px-4 sm:px-6 lg:px-16 h-full items-start pt-28 sm:pt-24 md:pt-32 lg:pt-48 pb-12 sm:pb-20"
+        className="hidden md:flex relative z-20 container mx-auto px-4 sm:px-6 lg:px-16 h-full items-start pt-36 sm:pt-32 md:pt-44 lg:pt-60 pb-12 sm:pb-20"
         initial={{ opacity: 0, x: -100 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, delay: 0.3 }}
