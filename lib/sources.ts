@@ -20,6 +20,16 @@ export const availableSources = [
         }
     },
     {
+        id: 'MappleTV',
+        name: 'MappleTV',
+        isFrench: false,
+        requiresNoSandbox: true,
+        urls: {
+            movie: 'https://mapple.uk/watch/movie/{id}?autoPlay=true&theme=#9900ff',
+            tv: 'https://mapple.uk/watch/tv/{id}-{season}-{episode}?nextButton=true&autoPlay=true&theme=#9900ff'
+        }
+    },
+    {
         id: 'SuperEmbed',
         name: 'SuperEmbed',
         isFrench: false,
